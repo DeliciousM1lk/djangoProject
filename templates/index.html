@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Объявления</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #007bff;
+            padding: 30px;
+            color: white;
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 30px auto;
+            background-color: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .rubrics, .bbs {
+            text-align: left;
+        }
+
+        .rubrics p {
+            margin: 10px 0;
+        }
+
+        a {
+            color: #007bff;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .bb {
+            margin: 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .bb h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .bb h2 a {
+            font-size: 20px;
+        }
+
+        .bb .price {
+            color: green;
+            font-weight: bold;
+        }
+
+        .bb h3 {
+            font-size: 16px;
+            color: #444;
+            margin: 5px 0 0 0;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            header {
+                font-size: 22px;
+            }
+
+            .bb h2 {
+                font-size: 18px;
+            }
+
+            .bb h3 {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    Добро пожаловать в список объявлений
+</header>
+
+<div class="container">
+
+    {% for d in data %}
+        <h2>{{d}}</h2>
+    {% empty %}
+        <h2>Данных нет</h2>
+    {% endfor %}
+    <div class="rubrics">
+        {% for rub in rubrics %}
+            <p><a href="{{ rub.get_absolute_url }}">{{ rub.name }}</a></p>
+        {% endfor %}
+    </div>
+
+    <hr>
+
+    <div class="bbs">
+        {% for b in bbs %}
+            {% if forloop.first %}
+                 <div class="bb">
+                    <h1 style="color: purple"><a href="{{ b.get_absolute_url }}">{{ b.title }}</a> — <span class="price">{{ b.price }}</span></h1>
+                    <h2 style="color: purple">{{ b.title_and_price }}</h2>
+                 </div>
+            {% elif forloop.last %}
+                <div class="bb">
+                    <h1 style="color: purple"><a href="{{ b.get_absolute_url }}">{{ b.title }}</a> — <span class="price">{{ b.price }}</span></h1>
+                    <h2 style="color: purple">{{ b.title_and_price }}</h2>
+                 </div>
+            {% else %}
+            <h1>№{{forloop.counter}}</h1>
+            <h1>№{{forloop.revcounter}}</h1>
+            <h1>{{forloop.first}}</h1>
+                <div class="bb">
+                    <h2><a href="{{ b.get_absolute_url }}">{{ b.title }}</a> — <span class="price">{{ b.price }}</span></h2>
+                    <h3>{{ b.title_and_price }}</h3>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+</div>
+
+</body>
+</html>

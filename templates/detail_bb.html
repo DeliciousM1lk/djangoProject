@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Detail Page</h1>
+<h2>{{ bb.rubric.name }}</h2>
+<p> {{bb.title}} - {{bb.price}}</p>
+<p> {{bb.content}} - {{bb.published}}</p>
+<a href="{% url 'app:update_bb' bb.pk %}">Update</a>
+<form action="{% url 'app:delete_bb' bb.pk %}" method="post">
+    {% csrf_token %}
+    <button type="submit"> Удалить </button>
+</form>
+</body>
+</html>
