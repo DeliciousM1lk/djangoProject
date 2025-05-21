@@ -1,22 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Date</title>
-</head>
-<body>
+{% extends "base.html" %}
 
-    {% for bb in latest %}
-<p>
-    {{bb.title}} - {{bb.price}}
-</p>
-    {% endfor %}
+{% block title %}
+Архив
+{% endblock %}
 
-    {% for d in date_list %}
-<p>
-    {{ d.year}}
-</p>
-    {% endfor %}
+{% block content %}
+<div class="container">
+  <h1 class="main-title">Архив дат</h1>
 
-</body>
-</html>
+  {% if latest %}
+    <div class="ads-grid">
+      {% for b in latest %}
+        <div class="ad-card">
+          <h2 class="ad-title">
+            <a href="{{ b.get_absolute_url }}">{{ b.title }}</a>
+          </h2>
+          <p class="ad-price">{{ b.price }} ₽</p>
+          <p class="ad-desc">{{ b.title_and_price }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="no-data">Объявлений пока нет.</p>
+  {% endif %}
+</div>
+{% endblock %}

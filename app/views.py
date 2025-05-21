@@ -265,3 +265,19 @@ class TemplateAllBboard(ListView):
         context['phone']=""
         context['html_code']="<i>Hello</i>"
         return context
+
+class TestView(TemplateView):
+    template_name = "test.html"
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -39,6 +39,7 @@ urlpatterns = [
     path('merge/<int:rubric_id>/',MergeBbRubricView.as_view(),name='merge'),
     path('contact/',ContactFormView.as_view(),name='contact'),
     path('all-bboards/',TemplateAllBboard.as_view(),name='all_bboards'),
+    path('test/',TestView.as_view(),name='test'),
 ]
 
 
