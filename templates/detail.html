@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}
+Рубрика
+{% endblock %}
+
+{% block content %}
 <h1>{{ rubric.name }}</h1>
 {% for bb in all_bb %}
 
@@ -13,5 +13,4 @@
 
 {% endfor %}
 <a href="{% url 'app:index_html' %}">Назад</a>
-</body>
-</html>
+{% endblock %}

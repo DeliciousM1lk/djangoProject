@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bootstrap</title>
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+</head>
+<body>
+    <form method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        {% buttons %}
+        <button type="submit" class="btn btn-primary">Submit</button>
+        {% endbuttons %}
+    </form>
+</body>
+</html>

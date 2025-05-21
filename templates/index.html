@@ -5,6 +5,15 @@
 {% endblock %}
 
 {% block content %}
+
+<div class="rubrics-row">
+    {% for rubric in rubrics %}
+        <div class="rubric-card">
+            <a href="{% url 'app:by_rubric' rubric.pk %}">{{ rubric.name }}</a>
+        </div>
+    {% endfor %}
+</div>
+
 <div class="container">
     <h1 class="main-title">Список объявлений</h1>
 
