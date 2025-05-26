@@ -318,3 +318,16 @@ def bb_paginator(request):
         "paginator": paginator,
     }
     return render(request, "bb_paginator.html", context)
+
+
+class BbListViewPaginator(ListView):
+    model = Bb
+    template_name = "bb_paginator.html"
+    context_object_name = "bbs"
+    paginate_by = 3
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["paginator"] = context["paginator"]
+        context["page_obj"] = context["page_obj"]
+        return context

@@ -6,6 +6,7 @@ from django.views.generic.detail import SingleObjectTemplateResponseMixin, Singl
 
 from .models import *
 from .form import *
+from ..utils.paginators import CustomPaginator
 
 
 def index(request):
@@ -305,8 +306,30 @@ class BootstrapFormView(FormView):
 
 
 from django.core.paginator import Paginator
+
+
 def bb_paginator(request):
     bbs = Bb.objects.all().order_by("-published")
     per_page = request.GET.get("per_page", 5)
     paginator = Paginator(bbs, per_page, orphans=2)
+    page_number = request.GET.get("page", 1)
+    page_obj = paginator.get_page(page_number)
+    context = {
+        "page_obj": page_obj,
+        "paginator": paginator,
+    }
+    return render(request, "bb_paginator.html", context)
 
+
+class BbListViewPaginator(ListView):
+    model = Bb
+    template_name = "bb_paginator.html"
+    context_object_name = "bbs"
+    paginate_by = 3
+    paginator_class = CustomPaginator
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["paginator"] = context["paginator"]
+        context["page_obj"] = context["page_obj"]
+        return context
