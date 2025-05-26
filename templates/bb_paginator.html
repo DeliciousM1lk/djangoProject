@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block title %}
+Объявления
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="main-title">Объявления</h1>
+
+    {% if page_obj %}
+    <div class="ads-grid">
+        {% for bb in page_obj %}
+        <div class="ad-card">
+            <div class="ad-title">
+                <a href="#">{{ bb.title }}</a>
+            </div>
+            <div class="ad-desc">
+                {{ bb.content|truncatechars:100 }}
+            </div>
+            <div class="ad-price">
+                {{ bb.price }} ₽
+            </div>
+            <div class="post-date">
+                {{ bb.published|date:"d.m.Y H:i" }}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="no-data">Объявлений нет</p>
+    {% endif %}
+
+    {% if page_obj.has_other_pages %}
+    <div class="pagination">
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}&per_page={{ page_obj.paginator.per_page }}"
+           aria-label="Предыдущая страница">&laquo;</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+        {% if num == page_obj.number %}
+        <span class="current">{{ num }}</span>
+        {% elif num >= page_obj.number|add:-2 and num <= page_obj.number|add:2 %}
+        <a href="?page={{ num }}&per_page={{ page_obj.paginator.per_page }}">{{ num }}</a>
+        {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}&per_page={{ page_obj.paginator.per_page }}"
+           aria-label="Следующая страница">&raquo;</a>
+        {% endif %}
+    </div>
+
+    <p class="pagination-info">
+        Показаны {{ page_obj.start_index }}–{{ page_obj.end_index }} из {{ page_obj.paginator.count }} объявлений.
+    </p>
+    {% endif %}
+</div>
+{% endblock %}

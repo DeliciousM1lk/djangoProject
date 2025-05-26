@@ -41,4 +41,5 @@ urlpatterns = [
     path('all-bboards/', TemplateAllBboard.as_view(), name='all_bboards'),
     path('test/', TestView.as_view(), name='test'),
     path('bootstrap/', BootstrapFormView.as_view(), name='bootstrap'),
+    path('paginator/', bb_paginator, name='paginator'),
 ]
