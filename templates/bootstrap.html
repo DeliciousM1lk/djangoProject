@@ -2,17 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Bootstrap</title>
-    {% load bootstrap5 %}
-    {% bootstrap_css %}
+    <title>Title</title>
 </head>
 <body>
-    <form method="post">
-        {% csrf_token %}
-        {% bootstrap_form form %}
-        {% buttons %}
+    {% load bootstrap5 %}
+    {% bootstrap_css %}
+
+<form method="post">
+    {% csrf_token %}
+     {% bootstrap_form form %}
+    {% buttons %}
         <button type="submit" class="btn btn-primary">Submit</button>
-        {% endbuttons %}
-    </form>
+    {% endbuttons %}
+</form>
+{% bootstrap_button "Save" button_type="submit" button_class="btn-primary" %}
 </body>
 </html>
+

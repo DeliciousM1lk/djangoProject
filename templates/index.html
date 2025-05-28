@@ -6,31 +6,32 @@
 
 {% block content %}
 
-<div class="rubrics-row">
-    {% for rubric in rubrics %}
-        <div class="rubric-card">
-            <a href="{% url 'app:by_rubric' rubric.pk %}">{{ rubric.name }}</a>
-        </div>
-    {% endfor %}
+<div class="rubrics">
+  {% for rub in rubrics %}
+    <a class="rubric-link" href="{{ rub.get_absolute_url }}">{{ rub.name }}</a>
+  {% endfor %}
 </div>
 
-<div class="container">
-    <h1 class="main-title">Список объявлений</h1>
 
-    {% if bbs %}
+
+
+<div class="container">
+  <h1 class="main-title">Список объявлений</h1>
+
+  {% if bbs %}
     <div class="ads-grid">
-        {% for b in bbs %}
+      {% for b in bbs %}
         <div class="ad-card">
-            <h2 class="ad-title">
-                <a href="{{ b.get_absolute_url }}">{{ b.title }}</a>
-            </h2>
-            <p class="ad-price">{{ b.price }} ₽</p>
-            <p class="ad-desc">{{ b.title_and_price }}</p>
+          <h2 class="ad-title">
+            <a href="{{ b.get_absolute_url }}">{{ b.title }}</a>
+          </h2>
+          <p class="ad-price">{{ b.price }} ₽</p>
+          <p class="ad-desc">{{ b.title_and_price }}</p>
         </div>
-        {% endfor %}
+      {% endfor %}
     </div>
-    {% else %}
+  {% else %}
     <p class="no-data">Объявлений пока нет.</p>
-    {% endif %}
+  {% endif %}
 </div>
 {% endblock %}

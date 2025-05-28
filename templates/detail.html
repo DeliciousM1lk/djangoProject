@@ -1,16 +1,32 @@
 {% extends "base.html" %}
 
 {% block title %}
-Рубрика
+{{ rubric.name }}
 {% endblock %}
 
 {% block content %}
-<h1>{{ rubric.name }}</h1>
-{% for bb in all_bb %}
+<div class="container">
+  <h1 class="main-title">Рубрика: {{ rubric.name }}</h1>
 
-<h1>{{bb.title}}</h1>
-<p>{{bb.content}} - {{bb.price}} - {{bb.published}}</p>
+  {% if all_bb %}
+    <div class="ads-grid">
+      {% for bb in all_bb %}
+        <div class="ad-card">
+          <h2 class="ad-title">
+            <a href="{{ bb.get_absolute_url }}">{{ bb.title }}</a>
+          </h2>
+          <p class="ad-price">{{ bb.price }} ₽</p>
+          <p class="ad-desc">{{ bb.content }}</p>
+          <p class="ad-date">{{ bb.published|date:"d.m.Y H:i" }}</p>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="no-data">В этой рубрике пока нет объявлений.</p>
+  {% endif %}
 
-{% endfor %}
-<a href="{% url 'app:index_html' %}">Назад</a>
+  <div class="back-link">
+    <a href="{% url 'app:index_html' %}">← Назад ко всем объявлениям</a>
+  </div>
+</div>
 {% endblock %}
