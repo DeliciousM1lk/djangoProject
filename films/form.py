@@ -22,11 +22,9 @@ class FilmFullForm(ModelForm):
     genre = CharField(
         label="Жанр фильма",
         widget=TextInput(attrs={"size": 40, "placeholder": "Введите жанр фильма"}),
-        max_length=100,
     )
     year = DateField(
         label="Год выпуска",
-        help_text="Год выпуска фильма",
         widget=SelectDateWidget(years=range(1900, 2025)),
     )
     class Meta:
@@ -50,19 +48,19 @@ class FilmForm(ModelForm):
             "year" : SelectDateWidget(years=range(1900, 2025))
         }
 
-    FilmFormFactory = modelform_factory(
-        Film,
-        fields="__all__",
-        labels={
-            "name": "Название",
-            "year": "Год выпуска",
-        },
-        help_texts={
-            "slug": "Уникальный идентификатор фильма, используемый в URL",
-            "genre": "Жанр фильма, например: драма, комедия, боевик и т.д." <
-        },
-        widgets={
-            "genre": TextInput(attrs={"placeholder": "Введите жанр фильма"}),
-            "year": SelectDateWidget(years=range(1900, 2025)),
-        }
-    )
+FilmFormFactory = modelform_factory(
+    Film,
+    fields="__all__",
+    labels={
+        "name": "Название",
+        "year": "Год выпуска",
+    },
+    help_texts={
+        "slug": "Уникальный идентификатор фильма, используемый в URL",
+        "genre": "Жанр фильма, например: драма, комедия, боевик и т.д." <
+    },
+    widgets={
+        "genre": TextInput(attrs={"placeholder": "Введите жанр фильма"}),
+        "year": SelectDateWidget(years=range(1900, 2025)),
+    }
+)
