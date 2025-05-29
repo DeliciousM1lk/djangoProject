@@ -3,12 +3,17 @@ from django.shortcuts import render
 from django.template.loader import *
 from django.urls import reverse
 from .form import *
-from .models import Film
+from django.core.paginator import Paginator
 
 
 def get_all_films(request):
-    all_films = Film.objects.all()
-    context = {'all_films': all_films}
+    all_films = Film.objects.all().order_by('name')
+    paginator = Paginator(all_films, 3)
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    context = {'page_obj': page_obj}
     template = get_template('films/films.html')
     return HttpResponse(template.render(context, request))
 
