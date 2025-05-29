@@ -79,18 +79,36 @@ def index(request):
     return response
 
 
+from .form import *
+
+
 def film_create(request, method="factory"):
     FORM_MAP = {
         "factory": FilmFormFactory,
         "quick": FilmForm,
-        "full": FilmFullForm,
+        "full": FilmFullForm
     }
     FormClass = FORM_MAP.get(method, FilmFormFactory)
     if request.method == "POST":
+        # form = FormClass(request.POST, request.FILES or None)
         form = FormClass(request.POST)
         if form.is_valid():
-            film = form.save()
+            film = form.save(commit=False)
+            print(film.slug)
+            film.save()
             return HttpResponseRedirect(reverse("films:all"))
-        else:
-            form = FormClass()
+    else:
+        form = FormClass()
     return render(request, "films/add_film.html", {"form": form})
+
+
+def film_create_html(request,mode="quick"):
+    if request.method=="POST":
+        form=FilmFullForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse("films:all"))
+    else:
+        form=FilmFullForm()
+    template="films/add_film.html" if mode=="quick" else "films/add_film_full.html"
+    return render(request,template,{"form":form})
