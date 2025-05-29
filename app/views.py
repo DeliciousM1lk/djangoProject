@@ -353,3 +353,16 @@ def hw_view(request):
         'rubrics': rubrics,
     }
     return render(request, 'hw.html', context)
+
+
+@require_http_methods(["GET", "POST"])
+def add_bb_modelform_factory(request):
+    if request.method == "POST":
+        form = BbFormFactory(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse("app:detail", kwargs={"pk": form.cleaned_data["rubric"].pk}))
+    else:
+        form = BbFormFactory()
+
+    return render(request, "add_bb.html", {"form": form})

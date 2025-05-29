@@ -44,5 +44,5 @@ urlpatterns = [
     path('paginator/', bb_paginator, name='paginator'),
     path('paginator-class/', BbListViewPaginator.as_view(), name='paginator-class'),
     path('hw/', hw_view, name='hw'),
-
+    path("add-factory/", add_bb_modelform_factory, name="add_factory"),
 ]
