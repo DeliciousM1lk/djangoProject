@@ -102,13 +102,23 @@ def film_create(request, method="factory"):
     return render(request, "films/add_film.html", {"form": form})
 
 
-def film_create_html(request,mode="quick"):
-    if request.method=="POST":
-        form=FilmFullForm(request.POST)
+def film_create_html(request, mode="quick"):
+    if request.method == "POST":
+        form = FilmFullForm(request.POST)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse("films:all"))
     else:
-        form=FilmFullForm()
-    template="films/add_film.html" if mode=="quick" else "films/add_film_full.html"
-    return render(request,template,{"form":form})
+        form = FilmFullForm()
+    template = "films/add_film.html" if mode == "quick" else "films/add_film_full.html"
+    return render(request, template, {"form": form})
+
+
+def chronological_list(request):
+    films = Film.objects.all().order_by('year')
+    return render(request, 'films/list.html', {'films': films})
+
+
+def reverse_chronological_list(request):
+    films = Film.objects.all().order_by('-year')
+    return render(request, 'films/list.html', {'films': films})

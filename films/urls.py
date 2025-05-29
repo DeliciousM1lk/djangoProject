@@ -15,4 +15,6 @@ urlpatterns = [
     path('index/', index, name='index'),
     path('film-create/<str:method>/', film_create, name='film-create'),
     path('film-create-html/<str:mode>/', film_create_html, name='film-create-html'),
+    path('chronological/', chronological_list, name='chronological_films'),
+    path('reverse/', reverse_chronological_list, name='reverse_chronological_films'),
 ]

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Список фильмов</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .sort-links {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .sort-links a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+        }
+
+        .sort-links a:hover {
+            text-decoration: underline;
+        }
+
+        .film-list {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .film {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+        .film:last-child {
+            border-bottom: none;
+        }
+
+        .film-title {
+            font-size: 1.2em;
+            color: #222;
+            margin-bottom: 5px;
+        }
+
+        .film-details {
+            font-size: 0.9em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+<h1>Список фильмов</h1>
+
+<div class="sort-links">
+    <a href="{% url 'films:chronological_films' %}">Сначала старые</a>
+    <a href="{% url 'films:reverse_chronological_films' %}">Сначала новые</a>
+</div>
+
+<div class="film-list">
+    {% for film in films %}
+    <div class="film">
+        <div class="film-title">{{ film.name }}</div>
+        <div class="film-details">
+            Автор: {{ film.author }}<br>
+            Жанр: {{ film.genre }}<br>
+            Год: {{ film.year|date:"Y" }}
+        </div>
+    </div>
+    {% empty %}
+    <p>Фильмы не найдены.</p>
+    {% endfor %}
+</div>
+</body>
+</html>
