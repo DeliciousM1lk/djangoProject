@@ -43,4 +43,6 @@ urlpatterns = [
     path('bootstrap/', BootstrapFormView.as_view(), name='bootstrap'),
     path('paginator/', bb_paginator, name='paginator'),
     path('paginator-class/', BbListViewPaginator.as_view(), name='paginator-class'),
+    path('hw/', hw_view, name='hw'),
+
 ]

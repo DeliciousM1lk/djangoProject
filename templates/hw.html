@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Объявления</h1>
+
+  <ul>
+    {% for bb in bbs %}
+      <li>
+        <a href="{% url 'app:detail_bb' bb.pk %}">{{ bb.title|title }}</a>
+        - Цена: {{ bb.price }}$
+        {% if bb.content %}
+          <p>{{ bb.content|truncatechars:50 }}</p>
+        {% endif %}
+      </li>
+    {% empty %}
+      <li>Объявлений пока нет.</li>
+    {% endfor %}
+  </ul>
+
+  <h2>Рубрики</h2>
+  <ul>
+    {% for rubric in rubrics %}
+      <li><a href="{% url 'app:detail' rubric.pk %}">{{ rubric.name }}</a></li>
+    {% endfor %}
+  </ul>
+{% endblock %}
