@@ -366,3 +366,21 @@ def add_bb_modelform_factory(request):
         form = BbFormFactory()
 
     return render(request, "add_bb.html", {"form": form})
+
+
+class RubricSetView(View):
+    template_name = "rubric_formset.html"
+
+    def get(self, request):
+        formset = RubricFormSet(queryset=Rubric.objects.all())
+        context = {"formset": formset}
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        formset = RubricFormSet(request.POST)
+        if formset.is_valid():
+            formset.save()
+            return redirect(reverse("app:all_class"))
+        else:
+            context = {"formset": formset}
+            return render(request, self.template_name, context)

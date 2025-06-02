@@ -57,3 +57,26 @@ BbFormFactory = modelform_factory(
         'price': 'Укажите цену в тенге.',
     }
 )
+
+
+class RubricForm(ModelForm):
+    class Meta:
+        model = Rubric
+        fields = ['name']
+        labels = {
+            'name': 'Название рубрики'
+        }
+        help_texts = {
+            'name': 'Введите название рубрики'
+        }
+        widgets = {
+            'name': TextInput(attrs={'placeholder': 'Название рубрики'})
+        }
+
+
+RubricFormSet = modelformset_factory(
+    Rubric,
+    form=RubricForm,
+    can_delete=True,
+    extra=2
+)
