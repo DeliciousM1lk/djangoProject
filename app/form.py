@@ -74,9 +74,53 @@ class RubricForm(ModelForm):
         }
 
 
+class RubricBaseFormSet(BaseModelFormSet):
+    def clean(self):
+        super().clean()
+
+        names = [
+            form.cleaned_data.get("name")
+            for form in self.forms
+            if form.cleaned_data and not form.cleaned_data.get("DELETE")
+        ]
+
+        required = {"Недвижимость", "Авто"}
+        missing = required - set(names)
+
+        if missing:
+            raise ValidationError(
+                f"Добавьте рубрики: {', '.join(sorted(missing))}"
+            )
+
+
 RubricFormSet = modelformset_factory(
     Rubric,
-    form=RubricForm,
+    fields=('name',),
     can_delete=True,
-    extra=2
+    formset=RubricBaseFormSet
+)
+
+
+class QuestionInline(BaseInlineFormSet):
+    MIN_QUESTIONS = 2
+    MAX_QUESTIONS = 10
+
+    def clean(self):
+        super().clean()
+
+        alive = len(self.forms) - len(self.deleted_forms)
+        if alive < self.MIN_QUESTIONS:
+            raise ValidationError(f"Минимальное количество вопросов: {self.MIN_QUESTIONS}")
+
+        if alive > self.MAX_QUESTIONS:
+            raise ValidationError(f"Максимальное количество вопросов: {self.MAX_QUESTIONS}")
+
+
+QuestionFormSet = inlineformset_factory(
+    Quiz,
+    Question,
+    fields=('text',),
+    formset=QuestionInline,
+    extra=3,
+    can_delete=True
 )

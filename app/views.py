@@ -371,16 +371,46 @@ def add_bb_modelform_factory(request):
 class RubricSetView(View):
     template_name = "rubric_formset.html"
 
+    def _get_formset(self, *, data=None):
+        RubricFormSet = modelformset_factory(
+            Rubric,
+            fields=("name",),
+            can_delete=True,
+            extra=2,
+            formset=RubricBaseFormSet,
+        )
+        return RubricFormSet(data=data, queryset=Rubric.objects.all())
+
     def get(self, request):
-        formset = RubricFormSet(queryset=Rubric.objects.all())
-        context = {"formset": formset}
-        return render(request, self.template_name, context)
+        formset = self._get_formset()
+        return render(request, self.template_name, {"formset": formset})
 
     def post(self, request):
-        formset = RubricFormSet(request.POST)
+        formset = self._get_formset(data=request.POST)
+
         if formset.is_valid():
             formset.save()
             return redirect(reverse("app:all_class"))
-        else:
-            context = {"formset": formset}
-            return render(request, self.template_name, context)
+
+        return render(request, self.template_name, {"formset": formset})
+
+
+class QuizFormsetView(View):
+    template_name = "quiz_formset.html"
+
+    def get(self, request, pk):
+        quiz = get_object_or_404(Quiz, pk=pk)
+        formset = QuestionFormSet(instance=quiz)
+        context = {"formset": formset, "quiz": quiz}
+        return render(request, self.template_name, context)
+
+    def post(self, request, pk):
+        quiz = get_object_or_404(Quiz, pk=pk)
+        formset = QuestionFormSet(request.POST, instance=quiz)
+
+        if formset.is_valid():
+            formset.save()
+            return redirect(reverse("app:quiz_formset", args=(quiz.pk,)))
+
+        context = {"formset": formset, "quiz": quiz}
+        return render(request, self.template_name, context)

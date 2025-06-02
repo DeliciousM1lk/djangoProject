@@ -45,4 +45,7 @@ urlpatterns = [
     path('paginator-class/', BbListViewPaginator.as_view(), name='paginator-class'),
     path('hw/', hw_view, name='hw'),
     path("add-factory/", add_bb_modelform_factory, name="add_factory"),
+    path('rubric-formset/', RubricSetView.as_view(), name='rubric_formset'),
+    path('quiz/<int:pk>/', QuizFormsetView.as_view(), name='quiz_formset'),
+
 ]
