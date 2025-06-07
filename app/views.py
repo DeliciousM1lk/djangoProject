@@ -355,19 +355,6 @@ def hw_view(request):
     return render(request, 'hw.html', context)
 
 
-@require_http_methods(["GET", "POST"])
-def add_bb_modelform_factory(request):
-    if request.method == "POST":
-        form = BbFormFactory(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect(reverse("app:detail", kwargs={"pk": form.cleaned_data["rubric"].pk}))
-    else:
-        form = BbFormFactory()
-
-    return render(request, "add_bb.html", {"form": form})
-
-
 class RubricSetView(View):
     template_name = "rubric_formset.html"
 
@@ -414,3 +401,16 @@ class QuizFormsetView(View):
 
         context = {"formset": formset, "quiz": quiz}
         return render(request, self.template_name, context)
+
+
+@require_http_methods(["GET", "POST"])
+def add_bb_modelform_factory(request):
+    if request.method == "POST":
+        form = BbFormFactory(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse("app:detail", kwargs={"pk": form.cleaned_data["rubric"].pk}))
+    else:
+        form = BbFormFactory()
+
+    return render(request, "add_bb.html", {"form": form})
