@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>{% block title %} {% endblock %}</title>
+  <meta charset="UTF-8">
+  <title>{% block title %}    {%endblock%}</title>
 </head>
 <body>
-<nav>
-    {% if user.is_authenticated %}
+  <nav>
+  {% if user.is_authenticated %}
     <p>Добро пожаловать, {{ user.username }}!</p>
     <a href="{% url 'home' %}">Главная</a>
     <a href="{% url 'logout' %}">Выйти</a>
     {% if perms.core.view_secret_post %}
-    <a href="{% url 'post_list' %}">Post List</a>
+    <a href="{% url 'post_list' %}">List Post</a>
     {% endif %}
-    {% else %}
-    <a href="{% url 'login' %}">Войти</a>
-    {% endif %}
-</nav>
-<hr>
+  {% else %}
+    <a href="{% url 'login' %}">Войти</a>
+  {% endif %}
+  </nav>
+  <hr>
 
 
 {% block content %}

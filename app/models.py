@@ -1,4 +1,6 @@
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes.fields import GenericForeignKey,GenericRelation
 from django.core.validators import *
 from django.db import models
 from django.core.exceptions import *
@@ -6,14 +8,77 @@ from django.http import HttpResponse
 from django.template.defaultfilters import title
 
 
-class Kind(models.IntegerChoices):
-    Buy = 1, 'Куплю'
-    Sell = 2, 'Продам'
-    Change = 3, 'Обмен'
+#Базовое наследование
+class Message(models.Model):
+    content=models.TextField()
 
+class PrivateMessage(Message):
+    # content уже есть
+    user=models.ForeignKey(User,on_delete=models.CASCADE)
+
+
+#Абстрактное наследование
+class Base(models.Model):
+    created=models.DateTimeField(auto_now_add=True)
+    class Meta:
+        abstract=True
+        ordering=["-created"]
+
+class Order(Base):
+    price=models.FloatField()
+
+    class Meta(Base.Meta):
+        verbose_name="Заказ"
+
+
+
+
+#Полиморфные связи
+class Note(models.Model):
+    content_type=models.ForeignKey(ContentType,on_delete=models.CASCADE)
+    object_id=models.PositiveIntegerField()
+    content_object=GenericForeignKey("content_type","object_id")
+    text=models.TextField()
+
+
+
+
+class Kind(models.IntegerChoices):
+    Buy=1,'Куплю'
+    Sell=2,'Продам'
+    Change=3,'Обмен'
+
+#select_related
+#prefetch_related
+#defer
+#only
+from django.db.models import Count
+
+# class RubricManager(models.Manager):
+#     def get_queryset(self):
+#         return super().get_queryset().order_by('-name')
+#
+#     def order_by_bb_count(self):
+#         return (
+#             self.get_queryset().annotate(bb_count=Count('bb'))
+#             .order_by("-bb_count")
+#         )
+
+class RubricQuerySet(models.QuerySet):
+    def order_by_bb_count(self):
+        return (
+            self.annotate(bb_count=Count('bb'))
+            .order_by("-bb_count")
+        )
+    def get_first_special(self):
+        return self.order_by("name").last()
 
 class Rubric(models.Model):
+    notes = GenericRelation(Note)
     name = models.CharField(max_length=100)
+    objects = RubricQuerySet.as_manager()
+    # objects = models.Manager()
+    # bbs= RubricManager()
 
     def __str__(self):
         return self.name
@@ -21,11 +86,17 @@ class Rubric(models.Model):
     def get_absolute_url(self):
         return f"/app/rubric/{self.pk}/"
 
+#Proxy наследование
+class RevRubric(Rubric):
+    class Meta:
+        proxy=True
+        ordering=["-name"]
+
+
 
 def validate_even(value):
     if value % 2 == 0:
         raise ValidationError(f"Число четное")
-
 
 class MinMaxValueValidator:
     def __init__(self, min_value, max_value):
@@ -43,33 +114,43 @@ class MinMaxValueValidator:
             {"min_value": self.min_value, "max_value": self.max_value},
         )
 
+class BbManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().order_by('price')
 
 class Bb(models.Model):
     rubric = models.ForeignKey(Rubric, on_delete=models.CASCADE)
-    title = models.CharField(max_length=100, verbose_name="Заголовок", validators=[RegexValidator("^.{4,}$")])
-    price = models.FloatField(blank=True, null=True, verbose_name="Цена", validators=[MinMaxValueValidator(0, 1000)])
-    content = models.TextField(blank=True, null=True, verbose_name="Контент", validators=[MaxLengthValidator(100)])
+    title = models.CharField(max_length=100,verbose_name="Заголовок",validators=[RegexValidator("^.{4,}$")])
+    price = models.FloatField(blank=True,null=True,verbose_name="Цена",validators=[MinMaxValueValidator(0,1000)])
+    content = models.TextField(blank=True,null=True,verbose_name="Контент",validators=[MaxLengthValidator(100)])
     # published=models.DateTimeField(auto_now_add=True,verbose_name="Дата")
-    published = models.DateTimeField(null=True, blank=True, verbose_name="Дата")
+    published=models.DateTimeField(null=True,blank=True,verbose_name="Дата")
+    objects = BbManager()
 
     def get_absolute_url(self):
         return f"/app/bb/{self.pk}/"
 
-    def save(self, *args, **kwargs):
-        if self.title == "Оружие":
+    def save(self,*args,**kwargs):
+        if self.title=="Оружие":
             raise ValidationError('Нельзя оружие')
-        super().save(*args, **kwargs)
+        super().save(*args,**kwargs)
 
-    def delete(self, *args, **kwargs):
-        if self.title == "Мяч":
+    def delete(self,*args,**kwargs):
+        if self.title=="Мяч":
             raise ValidationError('Нельзя удалять')
-        super().delete(*args, **kwargs)
+        super().delete(*args,**kwargs)
+
 
     def title_and_price(self):
         if self.price:
             return f"Title: {self.title}, Price: {self.price}$"
         else:
             return f"Title: {self.title}$"
+
+
+
+
+
 
     # KINDS=(
     #     ('Куплю-продам',
@@ -81,13 +162,14 @@ class Bb(models.Model):
     # )
     # kind=models.CharField(max_length=1,default='s',choices=KINDS)
 
+
     def __str__(self):
         return self.title
 
     class Meta:
-        verbose_name_plural = "Объявления"
-        verbose_name = "Объявление"
-        ordering = ["-published"]
+        verbose_name_plural="Объявления"
+        verbose_name="Объявление"
+        ordering=["-published"]
         # index_together = ['title','published']
         # constraints = (
         #     models.CheckConstraint(
@@ -98,29 +180,42 @@ class Bb(models.Model):
 
 
 class Passport(models.Model):
-    country = models.CharField(max_length=100)
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    country=models.CharField(max_length=100)
+    user=models.OneToOneField(User,on_delete=models.CASCADE)
 
 
 class Spare(models.Model):
-    name = models.CharField(max_length=30)
-
+    name=models.CharField(max_length=30)
+    notes=GenericRelation(Note)
+    def __str__(self):
+        return self.name
 
 class Machine(models.Model):
-    name = models.CharField(max_length=30)
-    spares = models.ManyToManyField(Spare)
+    name=models.CharField(max_length=30)
+    spares=models.ManyToManyField(Spare)
+    def __str__(self):
+        return self.name
+
+class Kit(models.Model):
+    machine=models.ForeignKey(Machine,on_delete=models.CASCADE)
+    spare=models.ForeignKey(Spare,on_delete=models.CASCADE)
+    count=models.IntegerField()
+    def __str__(self):
+        return f"{self.machine} - {self.spare} - {self.count}"
+
 
 
 class Quiz(models.Model):
-    title = models.CharField(max_length=100)
-
+    title=models.CharField(max_length=100)
     def __str__(self):
         return self.title
 
-
 class Question(models.Model):
-    quiz = models.ForeignKey(Quiz, on_delete=models.CASCADE)
-    text = models.CharField(max_length=200)
-
+    quiz=models.ForeignKey(Quiz,on_delete=models.CASCADE)
+    text=models.CharField(max_length=200)
     def __str__(self):
         return self.text
+
+
+
+

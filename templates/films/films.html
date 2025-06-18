@@ -10,7 +10,6 @@
             margin: 0;
             padding: 20px;
         }
-
         .film-card {
             background-color: #ffffff;
             border-radius: 8px;
@@ -19,80 +18,25 @@
             margin-bottom: 20px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
-
         .film-title {
             font-size: 24px;
             margin: 0 0 10px;
             color: #333333;
         }
-
-        .film-title a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .film-title a:hover {
-            color: #007BFF;
-        }
-
         .film-details {
             font-size: 16px;
             color: #777777;
-        }
-
-        .pagination {
-            margin-top: 20px;
-        }
-
-        .pagination a, .pagination span {
-            display: inline-block;
-            margin-right: 10px;
-            padding: 8px 12px;
-            border-radius: 4px;
-            background-color: #e0e0e0;
-            color: #333333;
-            text-decoration: none;
-            font-weight: 500;
-        }
-
-        .pagination a:hover {
-            background-color: #007BFF;
-            color: #fff;
-        }
-
-        .pagination .current {
-            background-color: #007BFF;
-            color: white;
-            font-weight: bold;
-            cursor: default;
         }
     </style>
 </head>
 <body>
 
-{% for film in page_obj %}
-<div class="film-card">
-    <h1 class="film-title"><a href="{% url 'films:film-by-slug' film.slug %}">{{ film.name }}</a></h1>
-    <p class="film-details">{{ film.genre }} &bull; {{ film.author }} &bull; {{ film.year }}</p>
-</div>
-{% empty %}
-<p>Фильмов не найдено.</p>
+{% for film in all_films %}
+  <div class="film-card">
+      <h1 class="film-title"><a href="{% url 'films:film-by-slug' film.slug %}"> {{ film.name }}</a></h1>
+      <p class="film-details">{{ film.genre }} &bull; {{ film.author }} &bull; {{ film.year }}</p>
+  </div>
 {% endfor %}
-
-<div class="pagination">
-    {% if page_obj.has_previous %}
-    <a href="?page=1">&laquo; Первая</a>
-    <a href="?page={{ page_obj.previous_page_number }}">Предыдущая</a>
-    {% endif %}
-
-    <span class="current">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
-
-    {% if page_obj.has_next %}
-    <a href="?page={{ page_obj.next_page_number }}">Следующая</a>
-    <a href="?page={{ page_obj.paginator.num_pages }}">Последняя &raquo;</a>
-    {% endif %}
-</div>
-
 <a href="{% url 'films:all' %}">Button1</a>
 <a href="{% url 'app:all' %}">Button2</a>
 

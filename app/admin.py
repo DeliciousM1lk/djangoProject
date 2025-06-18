@@ -12,8 +12,9 @@ admin.site.register(Rubric)
 admin.site.register(Passport)
 admin.site.register(Spare)
 admin.site.register(Machine)
+admin.site.register(Kit)
 admin.site.register(Quiz)
 admin.site.register(Question)
-
-
-
+admin.site.register(Note)
+admin.site.register(Message)
+admin.site.register(PrivateMessage)

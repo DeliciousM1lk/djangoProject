@@ -10,93 +10,85 @@ from .form import *
 
 
 def index(request):
-    s = "Список объявлений\n\n\n\n\n"
+    s="Список объявлений\n\n\n\n\n"
     for b in Bb.objects.all():
-        s += b.title + "\n" + b.content + "\n\n\n"
-    return HttpResponse(s, content_type="text/plain; charset=utf-8")
+        s += b.title + "\n"+ b.content+"\n\n\n"
+    return HttpResponse(s,content_type="text/plain; charset=utf-8")
 
 
 def index_html(request):
-    bbs = Bb.objects.all()
-    rubrics = Rubric.objects.all()
-    context = {"bbs": bbs, "rubrics": rubrics}
-    return render(request, 'index.html', context)
-
+    bbs=Bb.objects.all()
+    rubrics=Rubric.objects.all()
+    context={"bbs":bbs,"rubrics":rubrics}
+    return render(request,'index.html',context)
 
 def index2(request):
     return HttpResponse("Python Django")
 
+def detail(request,pk):
+    rubric=Rubric.objects.get(pk=pk)
+    all_bb=Bb.objects.filter(rubric=rubric)
+    context={"rubric":rubric,"all_bb":all_bb}
+    return render(request,'detail.html',context)
 
-def detail(request, pk):
-    rubric = Rubric.objects.get(pk=pk)
-    all_bb = Bb.objects.filter(rubric=rubric)
-    context = {"rubric": rubric, "all_bb": all_bb}
-    return render(request, 'detail.html', context)
-
-
-def detail_bb(request, pk):
-    bb = Bb.objects.get(pk=pk)
-    context = {"bb": bb}
-    return render(request, 'detail_bb.html', context)
+def detail_bb(request,pk):
+    bb=Bb.objects.get(pk=pk)
+    context={"bb":bb}
+    return render(request,'detail_bb.html',context)
 
 
 def add_bb(request):
-    if request.method == "POST":
-        bbform = BbForm(request.POST)
+    if request.method=="POST":
+        bbform=BbForm(request.POST)
         if bbform.is_valid():
             bbform.save()
             return HttpResponseRedirect(
                 reverse
                 ("app:detail",
-                 kwargs={"pk": bbform.cleaned_data["rubric"].pk}
+                 kwargs={"pk":bbform.cleaned_data["rubric"].pk}
                  ))
         else:
-            context = {"form": bbform}
-            return render(request, 'add_bb.html', context)
+            context={"form":bbform}
+            return render(request,'add_bb.html',context)
     else:
-        bbform = BbForm()
-        context = {"form": bbform}
-        return render(request, 'add_bb.html', context)
-
+        bbform=BbForm()
+        context={"form":bbform}
+        return render(request,'add_bb.html',context)
 
 def stream(request):
-    resp_content = ('Здесь ', 'будет ', 'отправляться ', 'текст')
+    resp_content=('Здесь ','будет ','отправляться ','текст')
     return StreamingHttpResponse(
         resp_content,
         content_type="text/plain; charset=utf-8")
 
-
 @require_GET
 def file_response(request):
-    file_path = r"C:\Users\winge\PycharmProjects\djangoProject1\project\static\picture.jpg"
-    return FileResponse(open(file_path, 'rb'), content_type='image/jpg', as_attachment=True)
-
+    file_path=r"C:\Users\winge\PycharmProjects\djangoProject1\project\static\picture.jpg"
+    return FileResponse(open(file_path, 'rb'), content_type='image/jpg',as_attachment=True)
 
 def our_decorator(func):
     def wrapper(request):
         print("hello")
         return func(request)
-
     return wrapper
-
 
 @our_decorator
 @require_http_methods(['POST'])
 def json_response(request):
-    bb = Bb.objects.get(title="Машина")
-    dictionary = {
-        "title": bb.title,
-        "content": bb.content,
-        "price": bb.price,
-        "published": bb.published,
+    bb=Bb.objects.get(title="Машина")
+    dictionary={
+        "title":bb.title,
+        "content":bb.content,
+        "price":bb.price,
+        "published":bb.published,
     }
     return JsonResponse(dictionary)
 
 
-def update_bb(request, pk):
-    bb = Bb.objects.get(pk=pk)
-    if request.method == "POST":
-        form = BbForm(request.POST, instance=bb)
+def update_bb(request,pk):
+    bb=Bb.objects.get(pk=pk)
+    if request.method=="POST":
+        form=BbForm(request.POST,instance=bb)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(
@@ -112,51 +104,44 @@ def update_bb(request, pk):
         context = {"form": form}
         return render(request, 'add_bb.html', context)
 
-
-def delete_bb(request, pk):
-    bb = get_object_or_404(Bb, pk=pk)
-    if request.method == "POST":
+def delete_bb(request,pk):
+    bb=get_object_or_404(Bb,pk=pk)
+    if request.method=="POST":
         bb.delete()
         return redirect(reverse("app:index_html"))
     return Http404()
 
 
+
 from django.views.generic import *
 from django.views.generic.base import *
 
-
 class BbCreateView(CreateView):
     model = Bb
-    fields = ['rubric', 'title', 'content', 'price']
+    fields = ['rubric','title','content','price']
     template_name = "add_bb.html"
-
 
 class BbByRubricTemplateView(TemplateView):
     template_name = "by_rubric_class.html"
-
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['bbs'] = Bb.objects.filter(rubric=context['rubric_id'])
-        context['rubrics'] = Rubric.objects.all()
-        context['current_rubric'] = Rubric.objects.get(pk=context['rubric_id'])
+        context=super().get_context_data(**kwargs)
+        context['bbs']=Bb.objects.filter(rubric=context['rubric_id'])
+        context['rubrics']=Rubric.objects.all()
+        context['current_rubric']=Rubric.objects.get(pk=context['rubric_id'])
         return context
 
-
 from django.views import View
-
-
 class RubricDetailView(View):
     def get(self, request, rubric_id):
-        current_rubric = get_object_or_404(Rubric, pk=rubric_id)
-        bbs = Bb.objects.filter(rubric=current_rubric)
-        rubrics = Rubric.objects.all()
-        context = {
-            "current_rubric": current_rubric,
-            "bbs": bbs,
-            "rubrics": rubrics,
+        current_rubric=get_object_or_404(Rubric,pk=rubric_id)
+        bbs=Bb.objects.filter(rubric=current_rubric)
+        rubrics=Rubric.objects.all()
+        context={
+            "current_rubric":current_rubric,
+            "bbs":bbs,
+            "rubrics":rubrics,
         }
-        return render(request, 'by_rubric_class.html', context)
-
+        return render(request,'by_rubric_class.html',context)
 
 class BbDetailView(DetailView):
     model = Bb
@@ -168,21 +153,20 @@ class BbListView(ListView):
     model = Bb
     template_name = "index.html"
     context_object_name = "bbs"
-
     # allow_empty = False
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['rubrics'] = Rubric.objects.all()
+        context=super().get_context_data(**kwargs)
+        context['rubrics']=Rubric.objects.all()
         data = ["Test1", "Test2", "Test3"]
-        context["data"] = data
+        context["data"]= data
         return context
 
 
 class BbUpdateView(UpdateView):
     # form_class = BbForm
     model = Bb
-    fields = ['rubric', 'title', 'content', 'price']
+    fields = ['rubric','title','content','price']
     success_url = "app/all/class/"
     template_name = "add_bb.html"
 
@@ -200,14 +184,12 @@ class BbIndexArchiveView(ArchiveIndexView):
     template_name = "date.html"
     context_object_name = "latest"
 
-
 class BbYearArchiveView(YearArchiveView):
     model = Bb
     template_name = "date.html"
     context_object_name = "latest"
     date_field = "published"
     make_object_list = True
-
 
 class BbMonthArchiveView(MonthArchiveView):
     model = Bb
@@ -217,7 +199,6 @@ class BbMonthArchiveView(MonthArchiveView):
     make_object_list = True
     month_format = "%m"
 
-
 class BbWeekArchiveView(WeekArchiveView):
     model = Bb
     date_field = "published"
@@ -225,7 +206,6 @@ class BbWeekArchiveView(WeekArchiveView):
     context_object_name = "latest"
     make_object_list = True
     weekday_format = "%W"
-
 
 class BbDayArchiveView(DayArchiveView):
     model = Bb
@@ -235,14 +215,12 @@ class BbDayArchiveView(DayArchiveView):
     make_object_list = True
     month_format = "%m"
 
-
 class BbTodayArchiveView(TodayArchiveView):
     model = Bb
     date_field = "published"
     template_name = "date.html"
     context_object_name = "latest"
     make_object_list = True
-
 
 class BbRedirectView(RedirectView):
     url = reverse_lazy("app:all_class")
@@ -253,15 +231,15 @@ class MergeBbRubricView(SingleObjectMixin, ListView):
     template_name = "by_rubric_class.html"
     pk_url_kwarg = "rubric_id"
 
-    def get(self, request, *args, **kwargs):
+    def get(self, request,*args, **kwargs):
         self.object = self.get_object(queryset=Rubric.objects.all())
         return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['rubrics'] = Rubric.objects.all()
-        context['current_rubric'] = self.object
-        context['bbs'] = context['object_list']
+        context=super().get_context_data(**kwargs)
+        context['rubrics']=Rubric.objects.all()
+        context['current_rubric']=self.object
+        context['bbs']=context['object_list']
         return context
 
     def get_queryset(self):
@@ -274,7 +252,7 @@ class ContactFormView(FormView):
     success_url = reverse_lazy("app:all_class")
 
     def form_valid(self, form):
-        print("Полученный данные", form.cleaned_data)
+        print("Полученный данные",form.cleaned_data)
         return super().form_valid(form)
 
 
@@ -284,10 +262,10 @@ class TemplateAllBboard(ListView):
     context_object_name = "bbs"
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['email'] = "test@gmail.com"
-        context['phone'] = ""
-        context['html_code'] = "<i>Hello</i>"
+        context=super().get_context_data(**kwargs)
+        context['email']="test@gmail.com"
+        context['phone']=""
+        context['html_code']="<i>Hello</i>"
         return context
 
 
@@ -301,18 +279,18 @@ class BootstrapFormView(FormView):
     success_url = reverse_lazy("app:all_class")
 
     def form_valid(self, form):
-        print("Полученный данные", form.cleaned_data)
+        print("Полученный данные",form.cleaned_data)
         return super().form_valid(form)
+
 
 
 from django.core.paginator import Paginator
 
-
 def bb_paginator(request):
     bbs = Bb.objects.all().order_by('-published')
     per_page = request.GET.get('per_page', 3)
-    paginator = Paginator(bbs, per_page, orphans=2)
-    page_number = request.GET.get('page', 1)
+    paginator = Paginator(bbs, per_page,orphans=2)
+    page_number = request.GET.get('page',1)
     page_obj = paginator.get_page(page_number)
     context = {
         'page_obj': page_obj,
@@ -320,11 +298,9 @@ def bb_paginator(request):
     }
     return render(request, 'bb_paginator.html', context)
 
-
 from django.views.generic import ListView
 from .models import Bb
 from .paginators import NegativeLabelPaginator
-
 
 class BbListViewPaginator(ListView):
     model = Bb
@@ -339,26 +315,18 @@ class BbListViewPaginator(ListView):
 
     def get_context_data(self, **kwargs):
         ctx = super().get_context_data(**kwargs)
-        paginator = ctx["paginator"]
-        page_obj = ctx["page_obj"]
+        paginator  = ctx["paginator"]
+        page_obj   = ctx["page_obj"]
         ctx["neg_page_range"] = paginator.get_negative_page_range()
         return ctx
 
-
-def hw_view(request):
-    bbs = Bb.objects.all()
-    rubrics = Rubric.objects.all()
-    context = {
-        'bbs': bbs,
-        'rubrics': rubrics,
-    }
-    return render(request, 'hw.html', context)
 
 
 class RubricSetView(View):
     template_name = "rubric_formset.html"
 
     def _get_formset(self, *, data=None):
+
         RubricFormSet = modelformset_factory(
             Rubric,
             fields=("name",),
@@ -381,36 +349,72 @@ class RubricSetView(View):
 
         return render(request, self.template_name, {"formset": formset})
 
-
 class QuizFormsetView(View):
     template_name = "quiz_formset.html"
 
-    def get(self, request, pk):
-        quiz = get_object_or_404(Quiz, pk=pk)
-        formset = QuestionFormSet(instance=quiz)
-        context = {"formset": formset, "quiz": quiz}
-        return render(request, self.template_name, context)
+    def get(self,request,pk):
+        quiz=get_object_or_404(Quiz,pk=pk)
+        formset=QuestionFormSet(instance=quiz)
+        context={"formset":formset,"quiz":quiz}
+        return render(request,self.template_name,context)
 
-    def post(self, request, pk):
-        quiz = get_object_or_404(Quiz, pk=pk)
-        formset = QuestionFormSet(request.POST, instance=quiz)
+    def post(self,request,pk):
+        quiz=get_object_or_404(Quiz,pk=pk)
+        formset=QuestionFormSet(request.POST,instance=quiz)
 
         if formset.is_valid():
             formset.save()
             return redirect(reverse("app:quiz_formset", args=(quiz.pk,)))
 
-        context = {"formset": formset, "quiz": quiz}
-        return render(request, self.template_name, context)
+        context={"formset":formset,"quiz":quiz}
+        return render(request,self.template_name,context)
+
+# DRY - Don't Repeat Yourself
+# KISS - Keep It Simple, Stupid
+# YAGNI - You Aren't Gonna Need It
+
+from django.db import transaction
+def manual_transaction_example(request):
+    transaction.set_autocommit(False)
+    sid=transaction.savepoint()
+    try:
+        rubric=Rubric.objects.create(name="Тестовая рубрика")
+        Bb.objects.create(
+            rubric=rubric,
+            title="Тестовое объявление",
+            content="Тестовое содержание",
+            price=10000.0)
+        Bb.objects.create(
+            rubric=rubric,
+            title="Тестовое объявление2",
+            content="Тестовое содержание2",
+            price=100.0)
+        transaction.savepoint_commit(sid)
+        transaction.commit()
+
+    except Exception as e:
+        transaction.savepoint_rollback(sid)
+        transaction.rollback()
+        transaction.set_autocommit(True)
+        return HttpResponse(f"Произошла ошибка: {e}", status=500)
+    finally:
+        transaction.set_autocommit(True)
+    return HttpResponse("Транзакция успешно выполнена", status=200)
+
+# @transaction.non_atomic_requests
+@transaction.atomic
+def atomic_transaction_example(request):
+    rubric=Rubric.objects.create(name="Атомарная рубрика")
+    Bb.objects.create(
+        rubric=rubric,
+        title="Атомарное объявление",
+        content="Атомарное содержание",
+        price=199.0
+    )
+    transaction.on_commit(lambda: print("Транзакция успешно завершена"))
+    return HttpResponse("Successed", status=200)
 
 
-@require_http_methods(["GET", "POST"])
-def add_bb_modelform_factory(request):
-    if request.method == "POST":
-        form = BbFormFactory(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect(reverse("app:detail", kwargs={"pk": form.cleaned_data["rubric"].pk}))
-    else:
-        form = BbFormFactory()
 
-    return render(request, "add_bb.html", {"form": form})
+
+

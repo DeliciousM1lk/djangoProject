@@ -5,34 +5,12 @@ from .models import *
 class BbForm(ModelForm):
     class Meta:
         model = Bb
-        fields = ['rubric', 'title', 'content', 'price']
-
-        labels = {
-            'rubric': 'Рубрика',
-            'title': 'Заголовок',
-            'content': 'Описание',
-            'price': 'Цена',
-        }
-
-        help_texts = {
-            'rubric': 'Выберите подходящую рубрику для вашего объявления.',
-            'title': 'Введите краткий и понятный заголовок.',
-            'content': 'Подробно опишите товар или услугу.',
-            'price': 'Укажите цену в тенге.',
-        }
-
-        widgets = {
-            'rubric': Select(attrs={'class': 'form-select'}),
-            'title': TextInput(attrs={'class': 'form-control', 'placeholder': 'Введите заголовок'}),
-            'content': Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Введите описание'}),
-            'price': NumberInput(attrs={'class': 'form-control', 'placeholder': 'Цена'}),
-        }
-
+        fields = ['rubric','title','content','price']
 
 class ContactForm(forms.Form):
-    name = CharField(label="Имя", max_length=100)
-    email = EmailField(label="Email")
-    text = CharField(label="Сообщение", max_length=500, widget=Textarea)
+    name=CharField(label="Имя",max_length=100)
+    email=EmailField(label="Email")
+    text=CharField(label="Сообщение",max_length=500,widget=Textarea)
 
 
 class RubricForm(ModelForm):
@@ -48,7 +26,6 @@ class RubricForm(ModelForm):
         widgets = {
             'name': TextInput(attrs={'placeholder': 'Название рубрики'})
         }
-
 
 class RubricBaseFormSet(BaseModelFormSet):
     def clean(self):
@@ -69,13 +46,6 @@ class RubricBaseFormSet(BaseModelFormSet):
             )
 
 
-RubricFormSet = modelformset_factory(
-    Rubric,
-    fields=('name',),
-    can_delete=True,
-    formset=RubricBaseFormSet
-)
-
 
 class QuestionInline(BaseInlineFormSet):
     MIN_QUESTIONS = 2
@@ -84,15 +54,14 @@ class QuestionInline(BaseInlineFormSet):
     def clean(self):
         super().clean()
 
-        alive = len(self.forms) - len(self.deleted_forms)
+        alive=len(self.forms) - len(self.deleted_forms)
         if alive < self.MIN_QUESTIONS:
             raise ValidationError(f"Минимальное количество вопросов: {self.MIN_QUESTIONS}")
 
         if alive > self.MAX_QUESTIONS:
             raise ValidationError(f"Максимальное количество вопросов: {self.MAX_QUESTIONS}")
 
-
-QuestionFormSet = inlineformset_factory(
+QuestionFormSet= inlineformset_factory(
     Quiz,
     Question,
     fields=('text',),
@@ -101,25 +70,5 @@ QuestionFormSet = inlineformset_factory(
     can_delete=True
 )
 
-BbFormFactory = modelform_factory(
-    Bb,
-    fields=['rubric', 'title', 'content', 'price'],
-    widgets={
-        'rubric': Select(attrs={'class': 'form-select'}),
-        'title': TextInput(attrs={'class': 'form-control', 'placeholder': 'Введите заголовок'}),
-        'content': Textarea(attrs={'class': 'form-control', 'rows': 5, 'placeholder': 'Введите описание'}),
-        'price': NumberInput(attrs={'class': 'form-control', 'placeholder': 'Цена'}),
-    },
-    labels={
-        'rubric': 'Рубрика',
-        'title': 'Заголовок',
-        'content': 'Описание',
-        'price': 'Цена',
-    },
-    help_texts={
-        'rubric': 'Выберите подходящую рубрику для вашего объявления.',
-        'title': 'Введите краткий и понятный заголовок.',
-        'content': 'Подробно опишите товар или услугу.',
-        'price': 'Укажите цену в тенге.',
-    }
-)
+
+

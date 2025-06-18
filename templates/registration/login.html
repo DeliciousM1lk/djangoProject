@@ -1,12 +1,9 @@
-{% extends "base2.html" %}
-
-{% block title %}
-Login
-{% endblock %}
-
+{% extends 'base2.html' %}
+{% block title %}Login{% endblock %}
 {% block content %}
+
 {% if user.is_authenticated %}
-<p>Вы уже зашли на сайт</p>
+<p>Вы уже зашли на сайт</p>
 {% else %}
 <form method="post">
     {% csrf_token %}
@@ -15,4 +12,5 @@ Login
     <input type="submit" value="login">
 </form>
 {% endif %}
+
 {% endblock %}

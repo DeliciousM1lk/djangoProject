@@ -3,17 +3,18 @@ from django.forms import *
 from .models import *
 
 
+
 class FilmFullForm(ModelForm):
-    slug = SlugField(
+    slug= SlugField(
         label="Уникальный идентификатор",
         help_text="Уникальный идентификатор фильма, используемый в URL",
         max_length=10,
         required=True,
         error_messages={
-            "max_length": "Уникальный идентификатор не должен превышать 10 символов.",
+            "max_length":"Уникальный идентификатор не должен превышать 10 символов.",
         }
     )
-    name = CharField(
+    name=CharField(
         label="Название фильма",
         max_length=200,
         validators=[MinLengthValidator(2)],
@@ -22,38 +23,40 @@ class FilmFullForm(ModelForm):
         }
     )
 
-    author = CharField(
+    author=CharField(
         label="Автор фильма",
         max_length=100,
     )
-    genre = CharField(
+    genre=CharField(
         label="Жанр фильма",
         widget=TextInput(attrs={"size": 40, "placeholder": "Введите жанр фильма"}),
     )
-    year = DateField(
+    year=DateField(
         label="Год выпуска",
         widget=SelectDateWidget(years=range(1900, 2025)),
     )
-
     class Meta:
         model = Film
         fields = ['slug', 'name', 'genre', 'author', 'year']
+
+
+
 
 
 class FilmForm(ModelForm):
     class Meta:
         model = Film
-        fields = ['slug', 'name', 'genre', 'author', 'year']
-        labels = {
+        fields = ['slug','name','genre','author','year']
+        labels={
             "slug": "Уникальный идентификатор",
             "name": "Название фильма",
         }
-        help_texts = {
+        help_texts={
             "author": "Автор фильма",
         }
-        widgets = {
-            "genre": TextInput(attrs={"size": 40}),
-            "year": SelectDateWidget(years=range(1900, 2025)),
+        widgets={
+            "genre":TextInput(attrs={"size":40}),
+            "year":SelectDateWidget(years=range(1900, 2025)),
         }
 
 
@@ -69,7 +72,11 @@ FilmFormFactory = modelform_factory(
         "genre": "Жанр фильма, например: драма, комедия, боевик и т.д.",
     },
     widgets={
-        "genre": TextInput(attrs={"placeholder": "Введите жанр фильма"}),
-        "year": SelectDateWidget(years=range(1900, 2025)),
+        "genre":TextInput(attrs={"placeholder": "Введите жанр фильма"}),
+        "year":SelectDateWidget(years=range(1900, 2025)),
     }
 )
+
+
+
+

@@ -4,44 +4,38 @@
     {% load static %}
     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'form_style.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <meta charset="UTF-8">
-    <title>{% block title %}Мой Сайт{% endblock %}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+    <title>{% block title %}   {%endblock %}</title>
 </head>
 <body>
-
-{% block navbar %}
-<nav class="navbar">
+  <nav class="navbar">
     <div class="navbar-container">
-        <a href="#" class="logo">Мой Сайт</a>
-        <ul class="nav-links">
-            <li><a href="{% url 'app:all_class' %}">Главная</a></li>
-            <li><a href="{% url 'app:create' %}">Создать пост</a></li>
-            <li><a href="{% url 'app:archive' %}">Архив</a></li>
-            <li><a href="{% url 'app:contact' %}">Контакты</a></li>
-        </ul>
+      <a href="#" class="logo">Мой Сайт</a>
+      <ul class="nav-links">
+        <li><a href="{% url 'app:all_class' %}">Главная</a></li>
+        <li><a href="{% url 'app:create' %}">Создать пост</a></li>
+        <li><a href="{% url 'app:archive' %}">Архив</a></li>
+        <li><a href="{% url 'app:contact' %}">Контакты</a></li>
+      </ul>
     </div>
-</nav>
-{% endblock navbar %}
+  </nav>
 
-<main>
-    {% block content %}
+{% block content %}
 
-    {% endblock content %}
-</main>
 
-{% block footer %}
-<footer class="footer">
+
+{% endblock %}
+
+  <footer class="footer">
     <div class="footer-container">
-        <p>&copy; 2025 МойСайт. Все права защищены.</p>
-        <div class="socials">
-            <a href="#">VK</a>
-            <a href="#">Telegram</a>
-            <a href="#">Instagram</a>
-        </div>
+      <p>&copy; 2025 МойСайт. Все права защищены.</p>
+      <div class="socials">
+        <a href="#">VK</a>
+        <a href="#">Telegram</a>
+        <a href="#">Instagram</a>
+      </div>
     </div>
-</footer>
-{% endblock footer %}
-
+  </footer>
 </body>
 </html>
