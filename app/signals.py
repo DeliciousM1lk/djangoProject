@@ -6,7 +6,7 @@ from django.dispatch import receiver
 
 from django.utils import timezone
 
-from .models import Bb, bb_custom_signal
+from .models import Bb, bb_custom_signal, Rubric
 
 logger = logging.getLogger(__name__)
 
@@ -19,6 +19,20 @@ def bb_pre_delete(sender, instance, **kwargs):
 @receiver(post_delete, sender=Bb, dispatch_uid="bb_post_delete_signal")
 def bb_post_delete(sender, instance, **kwargs):
     logger.info(f"{post_delete} Bb title {instance.title}")
+
+
+@receiver(pre_save, sender=Rubric, dispatch_uid="rubric_pre_save_signal")
+def rubric_pre_save(sender, instance, *args, **kwargs):
+    if instance.pk:
+        orig = sender.objects.get(pk=instance.pk)
+        logger.info(f"{pre_save} Rubric title {orig.name}")
+    else:
+        logger.info(f"{pre_save} Rubric title {instance.name}")
+
+
+@receiver(post_delete, sender=Rubric, dispatch_uid="rubric_post_delete_signal")
+def rubric_post_delete(sender, instance, **kwargs):
+    logger.info(f"{post_delete} Rubric title {instance.name}")
 
 
 @receiver(pre_save, sender=Bb, dispatch_uid="bb_pre_save_signal")
