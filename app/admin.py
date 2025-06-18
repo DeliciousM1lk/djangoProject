@@ -18,3 +18,7 @@ admin.site.register(Question)
 admin.site.register(Note)
 admin.site.register(Message)
 admin.site.register(PrivateMessage)
+class UserProfileAdmin(admin.ModelAdmin):
+    list_display = ('user', 'phone', 'website')
+
+admin.site.register(UserProfile, UserProfileAdmin)
