@@ -46,8 +46,8 @@ urlpatterns = [
     path('rubric-formset/',RubricSetView.as_view(),name='rubric_formset'),
     path('quiz/<int:pk>/',QuizFormsetView.as_view(),name='quiz_formset'),
     path('atomic/',manual_transaction_example,name='atomic'),
-    path('atomic-auto/', atomic_transaction_example, name='atomic-auto')
-
+    path('atomic-auto/', atomic_transaction_example, name='atomic-auto'),
+    path('json-response/',BbJsonView.as_view(),name='json-response'),
 ]
 
 

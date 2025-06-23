@@ -5,7 +5,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.decorators.http import *
 from django.views.generic.detail import SingleObjectTemplateResponseMixin, SingleObjectMixin
 
-from .mixins import RubricMixin, JsonResponseMixin
+from .mixins import RubricMixin, JsonResponseMixin, SuccessMessageMixin
 from .models import *
 from .form import *
 
@@ -126,10 +126,11 @@ from django.views.generic import *
 from django.views.generic.base import *
 
 
-class BbCreateView(CreateView):
+class BbCreateView(SuccessMessageMixin, CreateView):
     model = Bb
     fields = ['rubric', 'title', 'content', 'price']
     template_name = "add_bb.html"
+    success_message = "Объявление создано"
 
 
 class BbByRubricTemplateView(TemplateView):
