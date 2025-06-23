@@ -56,3 +56,26 @@ class RandomQuoteMixin:
         import random
         context['quote'] = random.choice(self.quotes)
         return context
+
+class UserIPMixin:
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        ip = self.request.META.get("REMOTE_ADDR", "IP не определён")
+        context["user_ip"] = ip
+        return context
+
+class RefererMixin:
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        referer = self.request.META.get("HTTP_REFERER", "Неизвестно")
+        context["referer"] = referer
+        return context
+
+import time
+class ResponseTimeHeaderMixin:
+    def dispatch(self, request, *args, **kwargs):
+        start = time.monotonic()
+        response = super().dispatch(request, *args, **kwargs)
+        duration_time = (time.perf_counter() - start) * 1000
+        response["X-Response-Time"] = f"{duration_time:.2f} ms"
+        return response

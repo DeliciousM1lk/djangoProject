@@ -6,7 +6,8 @@ from django.urls import reverse, reverse_lazy
 from django.views.decorators.http import *
 from django.views.generic.detail import SingleObjectTemplateResponseMixin, SingleObjectMixin
 
-from .mixins import RubricMixin, JsonResponseMixin, SuccessMessageMixin, CurrentTimeMixin, RandomQuoteMixin
+from .mixins import RubricMixin, JsonResponseMixin, SuccessMessageMixin, CurrentTimeMixin, RandomQuoteMixin, \
+    UserIPMixin, RefererMixin, ResponseTimeHeaderMixin
 from .models import *
 from .form import *
 
@@ -167,7 +168,7 @@ class BbDetailView(DetailView):
     # pk_url_kwarg = "bb_id"
 
 
-class BbListView(CurrentTimeMixin, RandomQuoteMixin, RubricMixin, ListView):
+class BbListView(ResponseTimeHeaderMixin ,UserIPMixin, RefererMixin, CurrentTimeMixin, RandomQuoteMixin, RubricMixin, ListView):
     model = Bb
     template_name = "index.html"
     context_object_name = "bbs"
