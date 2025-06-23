@@ -8,6 +8,8 @@
     <meta charset="UTF-8">
     <title>{% block title %} {%endblock %}</title>
 </head>
+<h1>{{quote}}</h1>
+<h2>{{current_time}}</h2>
 <header>
     <nav>
         <ul>
@@ -32,6 +34,13 @@
         </ul>
     </div>
 </nav>
+{% if messages %}
+<ul>
+    {% for message in messages %}
+    <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
 
 {% block content %}
 

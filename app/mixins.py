@@ -1,6 +1,6 @@
 from django.http import JsonResponse
 from django.views.generic.base import ContextMixin
-from pyexpat.errors import messages
+from django.contrib import messages
 
 from .models import Rubric
 
@@ -23,6 +23,7 @@ class JsonResponseMixin:
     def render_to_json_response(self, context, **response_kwargs):
         return JsonResponse(context, **response_kwargs)
 
+
 class SuccessMessageMixin:
     success_message = ""
 
@@ -32,3 +33,26 @@ class SuccessMessageMixin:
             messages.success(self.request, self.success_message)
             print(f"Success message: {self.success_message}")
         return response
+
+
+class CurrentTimeMixin:
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        from django.utils import timezone
+        current_time = timezone.now()
+        context['current_time'] = current_time
+        return context
+
+
+class RandomQuoteMixin:
+    quotes = [
+        "Ученье свет, не ученье тьма.",
+        "Век живи, век учись.",
+        "Кто ищет, тот всегда найдет.",
+    ]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        import random
+        context['quote'] = random.choice(self.quotes)
+        return context

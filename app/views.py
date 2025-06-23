@@ -1,3 +1,4 @@
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.http import *
 from django.shortcuts import render, get_object_or_404, redirect
@@ -5,7 +6,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.decorators.http import *
 from django.views.generic.detail import SingleObjectTemplateResponseMixin, SingleObjectMixin
 
-from .mixins import RubricMixin, JsonResponseMixin, SuccessMessageMixin
+from .mixins import RubricMixin, JsonResponseMixin, SuccessMessageMixin, CurrentTimeMixin, RandomQuoteMixin
 from .models import *
 from .form import *
 
@@ -126,7 +127,7 @@ from django.views.generic import *
 from django.views.generic.base import *
 
 
-class BbCreateView(SuccessMessageMixin, CreateView):
+class BbCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Bb
     fields = ['rubric', 'title', 'content', 'price']
     template_name = "add_bb.html"
@@ -166,7 +167,7 @@ class BbDetailView(DetailView):
     # pk_url_kwarg = "bb_id"
 
 
-class BbListView(RubricMixin, ListView):
+class BbListView(CurrentTimeMixin, RandomQuoteMixin, RubricMixin, ListView):
     model = Bb
     template_name = "index.html"
     context_object_name = "bbs"
