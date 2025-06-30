@@ -11,6 +11,10 @@ from .mixins import RubricMixin, JsonResponseMixin, SuccessMessageMixin, Current
 from .models import *
 from .form import *
 
+from django.views.decorators.cache import cache_page, cache_control
+from django.utils.decorators import method_decorator
+from django.views.decorators.vary import vary_on_headers, vary_on_cookie
+
 
 def index(request):
     s = "Список объявлений\n\n\n\n\n"
@@ -168,7 +172,8 @@ class BbDetailView(DetailView):
     # pk_url_kwarg = "bb_id"
 
 
-class BbListView(ResponseTimeHeaderMixin ,UserIPMixin, RefererMixin, CurrentTimeMixin, RandomQuoteMixin, RubricMixin, ListView):
+class BbListView(ResponseTimeHeaderMixin, UserIPMixin, RefererMixin, CurrentTimeMixin, RandomQuoteMixin, RubricMixin,
+                 ListView):
     model = Bb
     template_name = "index.html"
     context_object_name = "bbs"

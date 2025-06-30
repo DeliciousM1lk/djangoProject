@@ -161,3 +161,27 @@ LOGGING = {
         },
     },
 }
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'TIMEOUT': 300,
+        'KEY_PREFIX': '',
+        'VERSION': 1,
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000,
+            'CULL_FREQUENCY': 3,  # 1/3
+        }
+    },
+    'special': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'special',
+        'TIMEOUT': 300,
+    },
+    'db': {
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'my_cache',
+        'TIMEOUT': None,
+    }
+}
