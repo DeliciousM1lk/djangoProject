@@ -17,7 +17,6 @@ from django.conf.global_settings import LOGIN_URL, CACHE_MIDDLEWARE_ALIAS
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -28,7 +27,6 @@ SECRET_KEY = 'django-insecure-j=7oqal5x*#6(w9=nia=4h7)g6(7s2yeqnztdv)j(5m4ar!g-x
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-
 
 # Application definition
 
@@ -79,7 +77,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
@@ -91,7 +88,6 @@ DATABASES = {
         'AUTOCOMMIT': True,
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -111,7 +107,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
@@ -122,7 +117,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
@@ -138,9 +132,7 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-
-LOGIN_URL='login'
+LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
 
@@ -176,16 +168,25 @@ LOGGING = {
     },
 }
 
-CACHES={
-    'default':{
-        'BACKEND':'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION':'unique-snowflake',
-        'TIMEOUT':300,
-        'KEY_PREFIX':'',
-        'VERSION':1,
-        'OPTIONS':{
-            'MAX_ENTRIES':1000,
-            'CULL_FREQUENCY':3, #1/3
+# CACHES = {
+#     'default': {
+#         'BACKEND': 'django_redis.cache.RedisCache',
+#         'LOCATION': 'redis://localhost:6379/0',
+#     }
+# }
+# SESSION_ENGINE = "django.contrib.sessions.backends.cache"
+# SESSION_CACHE_ALIAS = "default"
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'TIMEOUT': 300,
+        'KEY_PREFIX': '',
+        'VERSION': 1,
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000,
+            'CULL_FREQUENCY': 3,  # 1/3
         }
     },
     'special': {
@@ -193,11 +194,9 @@ CACHES={
         'LOCATION': 'special',
         'TIMEOUT': 300,
     },
-    'db':{
+    'db': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
         'LOCATION': 'my_cache',
         'TIMEOUT': None,
     }
 }
-
-
