@@ -8,6 +8,7 @@ from django.views.decorators.http import require_POST
 
 from .form import *
 from .models import Film
+from .signals import drama_film_created
 
 
 def get_all_films(request):
@@ -124,9 +125,13 @@ def create_film(request):
         form = FilmFullForm(request.POST)
         if form.is_valid():
             film = form.save()
+
+            if film.genre.strip().lower() == 'драма':
+                drama_film_created.send(sender=Film, instance=film)
+
             return render(request, 'films/add_film.html', {
                 'form': FilmFullForm(),
-                'success': f'Фильм "{film.name}" успешно добавлен!'
+                'success': f'Фильм «{film.name}» успешно добавлен!',
             })
         else:
             return render(request, 'films/add_film.html', {'form': form})
