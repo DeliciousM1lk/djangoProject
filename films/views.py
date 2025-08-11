@@ -2,9 +2,11 @@ from django.http import HttpResponseRedirect, HttpResponse, Http404, HttpRespons
 from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import *
 from django.urls import reverse, reverse_lazy
+from django.views.generic import ListView
 from django.views import View
 
 from .form import *
+from .mixins import GenreListMixin
 from .models import Film
 
 
@@ -113,6 +115,10 @@ def film_create_html(request,mode="quick"):
     template="films/add_film.html" if mode=="quick" else "films/add_film_full.html"
     return render(request,template,{"form":form})
 
+class FilmListView(GenreListMixin, ListView):
+    model = Film
+    template_name = 'films/film_list.html'
+    context_object_name = 'films'
 
 
 

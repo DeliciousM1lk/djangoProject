@@ -1,0 +1,14 @@
+<h1>Список фильмов</h1>
+
+<ul>
+{% for film in films %}
+    <li>{{ film.name }} — {{ film.genre }} — {{ film.year }}</li>
+{% endfor %}
+</ul>
+
+<h2>Жанры:</h2>
+<ul>
+{% for genre in genres %}
+    <li>{{ genre }}</li>
+{% endfor %}
+</ul>
