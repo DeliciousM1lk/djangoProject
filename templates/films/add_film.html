@@ -120,31 +120,26 @@
     </style>
 </head>
 <body>
-<form class="form-card" method="post"
-      {% if form.is_multipart %}
-      enctype="multipart/form-data"
-      {% endif %}>
+    <form class="form-card" method="post"
+    {% if form.is_multipart %}
+          enctype="multipart/form-data"
+    {% endif %}>
 
-    <h1>Добавить фильм</h1>
-    {% csrf_token %}
-    {% if success %}
-    <p style="color: green; text-align: center; margin-bottom: 16px;">
-        {{ success }}
-    </p>
-    {% endif %}
-    <h3>Form p</h3>
-    {{ form.as_p }}
-    <h3>Form ul</h3>
-    <ul>
-        {{ form.as_ul }}
-    </ul>
+        <h1>Добавить фильм</h1>
+        {% csrf_token %}
+        <h3>Form p</h3>
+        {{ form.as_p }}
+         <h3>Form ul</h3>
+        <ul>
+            {{ form.as_ul }}
+        </ul>
 
-    <h3>Form table</h3>
-    <table>
-        {{ form.as_table }}
-    </table>
+        <h3>Form table</h3>
+        <table>
+            {{ form.as_table }}
+        </table>
 
-    <input type="submit" value="Отправить">
-</form>
+        <input type="submit" value="Отправить">
+    </form>
 </body>
 </html>

@@ -21,3 +21,23 @@ class PostCreateView(LoginRequiredMixin,CreateView):
         form.instance.author = self.request.user
         return super().form_valid(form)
 
+
+
+def bbcode(request):
+    example=(
+        "[b]Жирный текст[/b]\n"
+        "[i] Курсив[/i]\n"
+        "[url=https://pypi.org]Ссылка [/url]\n"
+        "[quote]Цитата[/quote]\n"
+        "[list]\n"
+        "[*] Первый пункт\n" 
+        "[*] Второй пункт]\n"
+        "[/list]\n"
+        ":) \n"
+        "[spoiler]SPOILER[/spoiler] \n"
+        "[under]UNDERLINE[/under]"
+    )
+    post=Post.objects.first()
+    context = {"example":example,"post":post}
+    return render(request, "core/bbcode.html", context)
+

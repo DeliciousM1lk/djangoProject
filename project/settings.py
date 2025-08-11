@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 
-from django.conf.global_settings import LOGIN_URL
+from django.conf.global_settings import LOGIN_URL, CACHE_MIDDLEWARE_ALIAS, SESSION_ENGINE, SESSION_CACHE_ALIAS
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -42,9 +42,17 @@ INSTALLED_APPS = [
     'app.apps.AppConfig',
     'films.apps.FilmsConfig',
     'core.apps.CoreConfig',
+    'precise_bbcode',
+    'tailwind',
+    'theme',
 ]
+TAILWIND_APP_NAME="theme"
+NPM_BIN_PATH=r"C:\Program Files\nodejs\npm.cmd"
 
 MIDDLEWARE = [
+    'django.middleware.http.ConditionalGetMiddleware',
+    # 'django.middleware.cache.UpdateCacheMiddleware',
+    # 'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -53,13 +61,18 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+# CACHE_MIDDLEWARE_ALIAS='default'
+# CACHE_MIDDLEWARE_SECONDS = 60*5
+# CACHE_MIDDLEWARE_KEY_PREFIX=''
 
 ROOT_URLCONF = 'project.urls'
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [
+            BASE_DIR / 'templates',
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -111,7 +124,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Almaty'
 
 USE_I18N = True
 
@@ -125,6 +138,7 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
+    BASE_DIR / 'theme'/'static',
 ]
 
 # Default primary key field type
@@ -168,4 +182,46 @@ LOGGING = {
             "propagate": False,
         },
     },
+}
+
+# CACHES={
+#     'default':{
+#         'BACKEND':'django_redis.cache.RedisCache',
+#         'LOCATION':'redis://localhost:6379/0',
+#     }
+# }
+# SESSION_ENGINE="django.contrib.sessions.backends.cache"
+# SESSION_CACHE_ALIAS="default"
+
+CACHES={
+    'default':{
+        'BACKEND':'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION':'unique-snowflake',
+        'TIMEOUT':300,
+        'KEY_PREFIX':'',
+        'VERSION':1,
+        'OPTIONS':{
+            'MAX_ENTRIES':1000,
+            'CULL_FREQUENCY':3, #1/3
+        }
+    },
+    'special': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'special',
+        'TIMEOUT': 300,
+    },
+    'db':{
+        'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+        'LOCATION': 'my_cache',
+        'TIMEOUT': None,
+    }
+}
+
+
+PRECISE_BBCODE={
+    'BBCODE_NEWLINE':'<br>',
+    'BBCODE_DISABLE_BUILTIN_TAGS':False,
+    'BBCODE_ALLOW_CUSTOM_TAGS':True,
+    'BBCODE_ALLOW_SMILIES':True,
+    'SMILIES_UPLOAD_TO':'precise_bbcode/smilies',
 }

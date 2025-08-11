@@ -4,10 +4,14 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
 from django.views.decorators.http import *
 from django.views.generic.detail import SingleObjectTemplateResponseMixin, SingleObjectMixin
-
+from .mixins import RubricMixin, JsonResponseMixin, SuccessMessageMixin, RandomQuoteMixin, CurrentTimeMixin, \
+    ResponseTimeHeaderMixin
 from .models import *
 from .form import *
 
+from django.views.decorators.cache import cache_page, cache_control, never_cache
+from django.utils.decorators import method_decorator
+from django.views.decorators.vary import vary_on_headers,vary_on_cookie
 
 def index(request):
     s="Список объявлений\n\n\n\n\n"
@@ -15,13 +19,16 @@ def index(request):
         s += b.title + "\n"+ b.content+"\n\n\n"
     return HttpResponse(s,content_type="text/plain; charset=utf-8")
 
-
+# @cache_page(60*5) # со стороны сервера
+@vary_on_headers('User-Agent')# со стороны клиента
+@cache_control(public=True, max_age=60*5) # со стороны клиента
 def index_html(request):
     bbs=Bb.objects.all()
     rubrics=Rubric.objects.all()
     context={"bbs":bbs,"rubrics":rubrics}
     return render(request,'index.html',context)
 
+@never_cache
 def index2(request):
     return HttpResponse("Python Django")
 
@@ -115,11 +122,15 @@ def delete_bb(request,pk):
 
 from django.views.generic import *
 from django.views.generic.base import *
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-class BbCreateView(CreateView):
+class BbCreateView(SuccessMessageMixin,CreateView):
     model = Bb
     fields = ['rubric','title','content','price']
     template_name = "add_bb.html"
+    success_message = "Объявление успешно создано"
+
+
 
 class BbByRubricTemplateView(TemplateView):
     template_name = "by_rubric_class.html"
@@ -148,8 +159,8 @@ class BbDetailView(DetailView):
     template_name = "detail_bb.html"
     # pk_url_kwarg = "bb_id"
 
-
-class BbListView(ListView):
+@method_decorator(cache_page(60*5), name='dispatch')
+class BbListView(ResponseTimeHeaderMixin,CurrentTimeMixin,RandomQuoteMixin, RubricMixin,ListView):
     model = Bb
     template_name = "index.html"
     context_object_name = "bbs"
@@ -161,6 +172,17 @@ class BbListView(ListView):
         data = ["Test1", "Test2", "Test3"]
         context["data"]= data
         return context
+
+
+class BbJsonView(JsonResponseMixin,TemplateView):
+    def get(self, request, *args, **kwargs):
+        bb=Bb.objects.first()
+        data={
+            "title": bb.title,
+            "content": bb.content,
+            "price": bb.price,
+        }
+        return self.render_to_json_response(data)
 
 
 class BbUpdateView(UpdateView):
@@ -415,6 +437,15 @@ def atomic_transaction_example(request):
     return HttpResponse("Successed", status=200)
 
 
+from django.core.cache import caches,cache
+def cache_backend(request):
+    db_cache=caches['db']
+    added=db_cache.add("unique","value",timeout=None)
+    counter=db_cache.get_or_set("counter",lambda:0,timeout=600)
+    db_cache.incr("counter")
+    cache.delete_many(["heavy_data","counter"])
+    return HttpResponse(f"Count = {db_cache.get("counter")}")
 
 
-
+def filter(request):
+    return render(request, "filter.html")

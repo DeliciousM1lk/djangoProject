@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     {% load static %}
+    {% load cache %}
+  {% load bbcode_tags %}
     <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'form_style.css' %}">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
@@ -9,6 +11,24 @@
     <title>{% block title %}   {%endblock %}</title>
 </head>
 <body>
+<h1>{{quote}}</h1>
+<h2>{{current_time}}</h2>
+
+
+<header>
+
+  <nav>
+    <ul>
+      {% for item in menu %}
+      <li class="{% if request.resolver_match.url_name == item.url_name %}active{% endif %}">
+        <a href="{% url item.url_name %}">{{item.title}}</a>
+      </li>
+
+      {% endfor %}
+    </ul>
+  </nav>
+</header>
+
   <nav class="navbar">
     <div class="navbar-container">
       <a href="#" class="logo">Мой Сайт</a>
@@ -20,6 +40,17 @@
       </ul>
     </div>
   </nav>
+{% if messages %}
+<ul>
+  {% for message in messages %}
+  <li class="{{ message.tags }}">{{ message }}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+
+
+
 
 {% block content %}
 
