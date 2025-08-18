@@ -1,0 +1,32 @@
+from django.contrib import admin
+from django.urls import *
+from .views import *
+
+
+urlpatterns = [
+    path('', home, name='home'),
+    path('cookie-demo/', cookie_demo, name='cookie_demo'),
+    path('cookie-set/', cookie_set, name='cookie_set'),
+    path('cookie-delete/', cookie_delete, name='cookie_delete'),
+
+    path('session-demo/', session_demo, name='session_demo'),
+    path('session-counter/', session_counter, name='session_counter'),
+    path('session-set-expiry/', session_set_expiry, name='session_set_expiry'),
+    path('session-flush/', session_flush, name='session_flush'),
+    path('session-cycle/', session_cycle, name='session_cycle'),
+    path('session-test-cookie/', session_test_cookie, name='session_test_cookie'),
+
+    path('message-demo/', message_demo, name='message_demo'),
+    path('message-success/', message_success, name='message_success'),
+    path('message-error/', message_error, name='message_error'),
+    path('message-custom/', message_custom, name='message_custom'),
+
+    path('signing/', signing_demo, name='signing_demo'),
+    path('signing-set/', signing_make_token, name='signing_set'),
+    #signing_set_type
+    path('signing-set-type/', signing_pack_payload, name='signing_set_type'),
+    path('cookie-signing/', cookie_set_signed, name='cookie_set_signed'),
+
+]
+
+

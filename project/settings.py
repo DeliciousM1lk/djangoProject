@@ -42,10 +42,22 @@ INSTALLED_APPS = [
     'app.apps.AppConfig',
     'films.apps.FilmsConfig',
     'core.apps.CoreConfig',
+    'webcore.apps.WebcoreConfig',
     'precise_bbcode',
     'tailwind',
     'theme',
+    'easy_thumbnails',
+    # 'django_cleanup.apps.CleanupConfig'
 ]
+
+THUMBNAIL_ALIASES = {
+    "": {  # глобальные пресеты (для всего проекта)
+        "default": {"size": (180, 240), "crop": "scale"},
+        "big": {"size": (480, 640), "crop": "10,10"},  # 10% смещение
+    },
+    # "app.Photo": {"default": {"size": (500, 300), "crop": "scale"}},
+}
+THUMBNAIL_DEFAULT_OPTIONS = {"quality": 85}
 TAILWIND_APP_NAME="theme"
 NPM_BIN_PATH=r"C:\Program Files\nodejs\npm.cmd"
 
@@ -60,6 +72,12 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'core.middleware.simple_middleware',
+    'core.middleware.RequestIdMiddleware',
+    'core.middleware.TimingMiddleware',
+    'core.middleware.BlockIPMiddleware',
+    'core.middleware.ExceptionMiddleware',
+
 ]
 # CACHE_MIDDLEWARE_ALIAS='default'
 # CACHE_MIDDLEWARE_SECONDS = 60*5
@@ -79,6 +97,10 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processors.posts',
+                'core.context_processors.site_info',
+                'core.context_processors.all_users',
+                'core.context_processors.current_year',
             ],
         },
     },
@@ -225,3 +247,17 @@ PRECISE_BBCODE={
     'BBCODE_ALLOW_SMILIES':True,
     'SMILIES_UPLOAD_TO':'precise_bbcode/smilies',
 }
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
+
+
+SESSION_COOKIE_NAME = "sessionid"
+SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SECURE = False
+
+CSRF_COOKIE_HTTPONLY = False
+CSRF_COOKIE_SECURE = False
+
+SESSION_COOKIE_AGE = 60*60*24*7
+
+MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'

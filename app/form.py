@@ -72,3 +72,38 @@ QuestionFormSet= inlineformset_factory(
 
 
 
+from django import forms
+from django.core.validators import FileExtensionValidator
+from .models import Document, Photo
+
+class DocumentForm(forms.ModelForm):
+    file = forms.FileField(
+        validators=[FileExtensionValidator(allowed_extensions=["pdf", "docx", "txt"])]
+    )
+    class Meta:
+        model = Document
+        fields = ("file",)
+
+class PhotoForm(forms.ModelForm):
+    image = forms.ImageField()  # можно добавить validate_image_file_extension
+    class Meta:
+        model = Photo
+        fields = ("image", "caption")
+
+# Не-модельная форма для множественной загрузки
+class ManyDocsForm(forms.Form):
+    files = forms.FileField(
+        validators=[FileExtensionValidator(allowed_extensions=["pdf", "docx", "txt"])],
+    )
+
+from easy_thumbnails.widgets import ImageClearableFileInput
+from django import forms
+from .models import PhotoResized
+
+class PhotoResizedForm(forms.ModelForm):
+    class Meta:
+        model = PhotoResized
+        fields = ("picture", "caption")
+        widgets = {
+            "picture": ImageClearableFileInput(thumbnail_options={"size": (120, 120), "crop": "scale"}),
+        }

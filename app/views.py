@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.core.paginator import Paginator
 from django.http import *
 from django.shortcuts import render, get_object_or_404, redirect
@@ -449,3 +450,93 @@ def cache_backend(request):
 
 def filter(request):
     return render(request, "filter.html")
+
+
+
+
+
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.views import View
+from .form import DocumentForm, PhotoForm, ManyDocsForm
+from .models import Document, Photo
+
+# Список документов
+def docs_list(request):
+    docs = Document.objects.order_by("-uploaded_at")
+    return render(request, "files/docs_list.html", {"docs": docs})
+
+# Загрузка одного документа (модельная форма)
+class UploadDocumentView(View):
+    def get(self, request):
+        return render(request, "files/upload_doc.html", {"form": DocumentForm()})
+
+    def post(self, request):
+        form = DocumentForm(request.POST, request.FILES)  # важно: request.FILES
+        if form.is_valid():
+            form.save()
+            return redirect("app:docs_list")
+        return render(request, "files/upload_doc.html", {"form": form})
+
+# Загрузка нескольких документов (не-модельная форма)
+class UploadManyDocsView(View):
+    def get(self, request):
+        return render(request, "files/upload_many.html", {"form": ManyDocsForm()})
+
+    def post(self, request):
+        form = ManyDocsForm(request.POST, request.FILES)
+        if form.is_valid():
+            for f in request.FILES.getlist("files"):  # забираем ВСЕ файлы
+                Document.objects.create(file=f)
+            return redirect("app:docs_list")
+        return render(request, "files/upload_many.html", {"form": form})
+
+def delete_document(request, pk):
+    doc = get_object_or_404(Document, pk=pk)
+    storage = doc.file.storage
+    name = doc.file.name
+    doc.delete()
+    if name:
+        storage.delete(name)
+    messages.success(request, "Документ успешно удален")
+    return redirect("app:docs_list")
+
+# Список фото
+def photos_list(request):
+    photos = Photo.objects.order_by("-created_at")
+    return render(request, "files/photos_list.html", {"photos": photos})
+
+# Загрузка фото (модельная форма)
+class UploadPhotoView(View):
+    def get(self, request):
+        return render(request, "files/upload_photo.html", {"form": PhotoForm()})
+
+    def post(self, request):
+        form = PhotoForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("app:photos_list")
+        return render(request, "files/upload_photo.html", {"form": form})
+
+# Удаление фото — в самом моделe.delete() мы уже удаляем файл; вызовем просто .delete()
+def delete_photo(request, pk):
+    photo = get_object_or_404(Photo, pk=pk)
+    photo.delete()
+    return redirect("app:photos_list")
+
+def gallery_list(request):
+    photos = PhotoResized.objects.order_by("-created_at")
+    return render(request, "files/gallery_list.html", {"photos": photos})
+
+from .form import PhotoResizedForm
+from .models import PhotoResized
+
+class UploadResizedPhotoView(View):
+    def get(self, request):
+        return render(request, "files/upload_resized.html", {"form": PhotoResizedForm()})
+    def post(self, request):
+        form = PhotoResizedForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect("app:gallery_list")
+        return render(request, "files/upload_resized.html", {"form": form})

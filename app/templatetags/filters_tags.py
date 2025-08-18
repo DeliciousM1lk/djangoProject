@@ -31,3 +31,20 @@ def show_time(context,fmt="%d.%m.%Y %H:%M:%S"):
 @register.inclusion_tag("bullet.html")
 def bullet(*items):
     return {"items":items,"count":len(items)}
+
+@register.filter
+def slice_v2(value):
+    value=str(value)
+    length=int(len(value)/2)
+    return value[:length]
+
+@register.filter
+def change_digit(value):
+    value=str(value)
+    result=[]
+    for i in value:
+        if i.isdigit():
+            result.append("*")
+        else:
+            result.append(i)
+    return "".join(result)

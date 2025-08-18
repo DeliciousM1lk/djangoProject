@@ -275,3 +275,67 @@ class Question(models.Model):
 
 
 
+
+import time
+from uuid import uuid4
+from pathlib import Path
+from django.db import models
+
+def photo_path(instance, filename: str) -> str:
+    ts = int(time.time())
+    ext = filename.split(".")[-1].lower()
+    return f'uploads/{time.strftime("%Y/%m/%d")}/{uuid4().hex}_{ts}.{ext}'
+
+class Document(models.Model):
+    file = models.FileField(upload_to="docs/")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.file.name or f"Document #{self.pk}"
+
+class Photo(models.Model):
+    image = models.ImageField(upload_to=photo_path, width_field="width", height_field="height")
+    caption = models.CharField("Подпись", max_length=200, blank=True)
+    width = models.PositiveIntegerField(null=True, blank=True, editable=False)
+    height = models.PositiveIntegerField(null=True, blank=True, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.caption or f"Photo #{self.pk}"
+
+    def delete(self, *args, **kwargs):
+        storage = self.image.storage
+        name = self.image.name
+        super().delete(*args, **kwargs)
+        if name:
+            storage.delete(name)
+
+BASE_MEDIA = Path(__file__).resolve().parents[2] / "media"
+
+def media_root_path():
+    return str(BASE_MEDIA)
+
+class StaticPick(models.Model):
+    pick = models.FilePathField(
+        path=media_root_path,
+        match=r".*\.txt$",
+        recursive=False,
+        allow_files=True,
+        allow_folders=False,
+    )
+
+    def __str__(self):
+        return self.pick
+
+from easy_thumbnails.fields import ThumbnailerImageField
+
+class PhotoResized(models.Model):
+    picture = ThumbnailerImageField(
+        upload_to="photos_resized/",
+        resize_source={"size": (1280, 1280), "crop": "scale"},  # сохранится уменьшенная копия
+    )
+    caption = models.CharField(max_length=200, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.caption or f"Resized #{self.pk}"

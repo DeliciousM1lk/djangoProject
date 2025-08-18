@@ -50,6 +50,20 @@ urlpatterns = [
     path('json-response/', BbJsonView.as_view(), name='json-response'),
     path('cache/',cache_backend,name='cache'),
     path('filter/',filter,name='filter'),
+
+    path("doclist/", docs_list, name="docs_list"),
+    path("photos/", photos_list, name="photos_list"),
+
+    path("upload/doc/", UploadDocumentView.as_view(), name="upload_doc"),
+    path("upload/doc/many/", UploadManyDocsView.as_view(), name="upload_many"),
+    path("upload/photo/", UploadPhotoView.as_view(), name="upload_photo"),
+
+    path("delete/doc/<int:pk>/", delete_document, name="delete_document"),
+    path("delete/photo/<int:pk>/", delete_photo, name="delete_photo"),
+
+    path("gallery/", gallery_list, name="gallery_list"),
+
+    path("upload/resized/", UploadResizedPhotoView.as_view(), name="upload_resized"),
 ]
 
 

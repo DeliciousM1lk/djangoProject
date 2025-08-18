@@ -15,7 +15,7 @@ urlpatterns = [
     path('index/',index,name='index'),
     path('film-create/<str:method>/',film_create, name='film-create'),
     path('film-create-html/<str:mode>/',film_create_html, name='film-create-html'),
-    path('', FilmListView.as_view(), name='film_list'),
+
 ]
 
 
