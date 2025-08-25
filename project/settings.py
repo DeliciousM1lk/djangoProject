@@ -17,7 +17,6 @@ from django.conf.global_settings import LOGIN_URL, CACHE_MIDDLEWARE_ALIAS, SESSI
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -29,10 +28,10 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
-
 # Application definition
 
 INSTALLED_APPS = [
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,8 +46,28 @@ INSTALLED_APPS = [
     'tailwind',
     'theme',
     'easy_thumbnails',
+    'rest_framework',
+    'corsheaders',
     # 'django_cleanup.apps.CleanupConfig'
 ]
+
+JAZZMIN_SETTINGS = {
+    "site_title": "MarketPlace Admin",
+    "site_header": "Admin Pane;",
+    "welcome_sign": "Welcome to the Admin Panel",
+    "site_brand": "Python44",
+    "show_sidebar": True,
+    "show_navigation": True,
+    "navigation_expanded": True,
+    "related_modal_active": True,
+    "icons": {
+        "webcore.Ad": "fas fa-bullhorn",
+        "webcore.Rubric": "fas fa-folder-tree",
+        "webcore.Comment": "fas fa-comment-dots",
+        "auth.User": "fas fa-user",
+        "auth.Group": "fas fa-users",
+    },
+}
 
 THUMBNAIL_ALIASES = {
     "": {  # глобальные пресеты (для всего проекта)
@@ -58,8 +77,8 @@ THUMBNAIL_ALIASES = {
     # "app.Photo": {"default": {"size": (500, 300), "crop": "scale"}},
 }
 THUMBNAIL_DEFAULT_OPTIONS = {"quality": 85}
-TAILWIND_APP_NAME="theme"
-NPM_BIN_PATH=r"C:\Program Files\nodejs\npm.cmd"
+TAILWIND_APP_NAME = "theme"
+NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"
 
 MIDDLEWARE = [
     'django.middleware.http.ConditionalGetMiddleware',
@@ -67,6 +86,7 @@ MIDDLEWARE = [
     # 'django.middleware.cache.FetchFromCacheMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -77,6 +97,7 @@ MIDDLEWARE = [
     'core.middleware.TimingMiddleware',
     'core.middleware.BlockIPMiddleware',
     'core.middleware.ExceptionMiddleware',
+    'django.middleware.common.CommonMiddleware',
 
 ]
 # CACHE_MIDDLEWARE_ALIAS='default'
@@ -108,7 +129,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'project.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
@@ -120,7 +140,6 @@ DATABASES = {
         'AUTOCOMMIT': True,
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -140,7 +159,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
@@ -152,7 +170,6 @@ USE_I18N = True
 
 USE_TZ = True
 
-
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
@@ -160,7 +177,7 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
-    BASE_DIR / 'theme'/'static',
+    BASE_DIR / 'theme' / 'static',
 ]
 
 # Default primary key field type
@@ -168,9 +185,7 @@ STATICFILES_DIRS = [
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-
-
-LOGIN_URL='login'
+LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'login'
 
@@ -215,16 +230,16 @@ LOGGING = {
 # SESSION_ENGINE="django.contrib.sessions.backends.cache"
 # SESSION_CACHE_ALIAS="default"
 
-CACHES={
-    'default':{
-        'BACKEND':'django.core.cache.backends.locmem.LocMemCache',
-        'LOCATION':'unique-snowflake',
-        'TIMEOUT':300,
-        'KEY_PREFIX':'',
-        'VERSION':1,
-        'OPTIONS':{
-            'MAX_ENTRIES':1000,
-            'CULL_FREQUENCY':3, #1/3
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+        'TIMEOUT': 300,
+        'KEY_PREFIX': '',
+        'VERSION': 1,
+        'OPTIONS': {
+            'MAX_ENTRIES': 1000,
+            'CULL_FREQUENCY': 3,  # 1/3
         }
     },
     'special': {
@@ -232,24 +247,22 @@ CACHES={
         'LOCATION': 'special',
         'TIMEOUT': 300,
     },
-    'db':{
+    'db': {
         'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
         'LOCATION': 'my_cache',
         'TIMEOUT': None,
     }
 }
 
-
-PRECISE_BBCODE={
-    'BBCODE_NEWLINE':'<br>',
-    'BBCODE_DISABLE_BUILTIN_TAGS':False,
-    'BBCODE_ALLOW_CUSTOM_TAGS':True,
-    'BBCODE_ALLOW_SMILIES':True,
-    'SMILIES_UPLOAD_TO':'precise_bbcode/smilies',
+PRECISE_BBCODE = {
+    'BBCODE_NEWLINE': '<br>',
+    'BBCODE_DISABLE_BUILTIN_TAGS': False,
+    'BBCODE_ALLOW_CUSTOM_TAGS': True,
+    'BBCODE_ALLOW_SMILIES': True,
+    'SMILIES_UPLOAD_TO': 'precise_bbcode/smilies',
 }
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
-
 
 SESSION_COOKIE_NAME = "sessionid"
 SESSION_COOKIE_HTTPONLY = True
@@ -258,6 +271,29 @@ SESSION_COOKIE_SECURE = False
 CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SECURE = False
 
-SESSION_COOKIE_AGE = 60*60*24*7
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 7
 
 MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'vladdeev00@gmail.com'
+EMAIL_HOST_PASSWORD = 'gpwn symk nfek khih'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_USE_LOCALTIME = True
+EMAIL_TIMEOUT = 30
+
+DEFAULT_FROM_EMAIL = 'vladdeev00@gmail.com'
+ADMINS = [
+    ('Admin', 'vladdeev00@gmail.com'),]
+MANAGERS = [
+    ('Manager', 'vladdeev00@gmail.com'),]
+EMAIL_SUBJECT_PREFIX = '[Django] '
+
+REST_FRAMEWORK = {
+
+}
+
+CORS_ORIGIN_ALLOW_ALL_ORIGINS = True

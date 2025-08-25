@@ -48,3 +48,14 @@ def change_digit(value):
         else:
             result.append(i)
     return "".join(result)
+
+@register.simple_tag
+def cut_text(value, length=50):
+    if len(value) > length:
+        return value[:length] + "..."
+    return value
+
+@register.simple_tag
+def repeat(text, times=2):
+    """Повторяет строку заданное количество раз"""
+    return (text + " ") * int(times)

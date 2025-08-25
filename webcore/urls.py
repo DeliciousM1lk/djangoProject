@@ -26,6 +26,16 @@ urlpatterns = [
     #signing_set_type
     path('signing-set-type/', signing_pack_payload, name='signing_set_type'),
     path('cookie-signing/', cookie_set_signed, name='cookie_set_signed'),
+    path('mail/send/', test_email),
+    path('mail/send/low/', send_low_code_email_v1),
+    path('mail/send/file/', send_low_code_email_v2),
+    path('mail/send/html/', send_low_code_email_v3),
+    path('mail/send/many/', send_many_emails),
+    path('mail/send/admins/', notify_admins),
+    path('mail/send/contact/', contact_form),
+    path('verify/<str:token>/', verify_token),
+
+    path('api/rubrics/', rubrics_api, name='rubrics_api'),
 
 ]
 
