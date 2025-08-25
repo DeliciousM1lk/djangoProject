@@ -3,31 +3,28 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.template.loader import *
 from django.urls import reverse, reverse_lazy
 from django.views import View
+from django.views.decorators.cache import cache_control
 
 from .form import *
 from .models import Film
 
 
+@cache_control(public=True, max_age=300)
 def get_all_films(request):
     all_films = Film.objects.all()
     context = {'all_films': all_films}
-    template=get_template('films/films.html')
+    template = get_template('films/films.html')
     return HttpResponse(template.render(context, request))
 
-    # return render(request,'films/films.html',context)
 
-
-def get_film_by_slug(request,slug):
+@cache_control(public=True, max_age=120)
+def get_film_by_slug(request, slug):
     try:
         film = Film.objects.get(slug=slug)
         context = {'film': film}
     except Film.DoesNotExist:
-        # return HttpResponse(status=404)
         raise Http404("Film does not exist")
-
-        # return HttpResponseNotFound("Такое объявление не надйено")
     return render(request, 'films/film.html', context)
-
 
 def get_film_by_id(request,pk):
     film = Film.objects.get(pk=pk)
